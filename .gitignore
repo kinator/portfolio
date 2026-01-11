@@ -1,2 +1,5 @@
 vendor
 TODO
+.env
+.htaccess
+.vscode
