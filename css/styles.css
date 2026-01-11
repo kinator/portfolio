@@ -1,0 +1,173 @@
+:root {
+  --primary-color: #0093d2;
+  --secondary-color: #2c3e50;
+  --accent-color: #59cafa;
+  --text-color: #333;
+  --light-bg: #f8f9fa;
+  --dark-bg: #343a40;
+  --white: #ffffff;
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  font-family: var(--font-main);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: var(--secondary-color);
+}
+
+.main-background-color {
+  background: var(--primary-color);
+}
+
+.logo-container {
+  position: absolute;
+  left: 20px;
+}
+
+.user_header {
+  font-size: medium;
+  text-align: center;
+}
+
+.margin {
+  max-width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.top_header {
+  background: var(--primary-color);
+  color: var(--white);
+  padding: 10px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.paraline {
+  background: var(--primary-color);
+  color: var(--white);
+  font-weight: bold;
+  padding: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.one-line-table {
+  margin-left: 5%;
+  margin-right: 5%;
+  width: 90%;
+}
+
+.grid-container {
+  display: grid;
+  gap: 10px;
+}
+
+.link {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: var(--primary-color);
+}
+
+.h4-form {
+  margin: 0;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.hidden-button {
+  background: inherit;
+  border: none;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+.maquette-paragraph {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.maquette-table {
+  margin-top: 10px;
+  margin-bottom: 50px;
+}
+
+.maquette-cell {
+  width: 25%;
+}
+
+.maquette-cell-empty {
+  width: 25%;
+  background: #ef292986;
+}
+
+.maquette-cell-dead {
+  width: 25%;
+  background: #000000cb;
+}
+
+.modal-line {
+  border-bottom: 1px solid #737373;
+}
+
+.maquette-icon {
+  width: 4vw;
+  min-width: 30px;
+  height: 4vw;
+  min-height: 30px;
+  background: white;
+}
+
+/* Modern Portfolio Additions */
+
+.w3-button {
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.w3-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.w3-light-grey {
+  background-color: var(--light-bg) !important;
+}
+
+.w3-dark-grey {
+  background-color: var(--dark-bg) !important;
+  color: var(--white) !important;
+}
+
+/* Hero Section Tweaks */
+.w3-jumbo {
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+/* Section Spacing */
+.w3-padding-64 {
+  padding-top: 80px !important;
+  padding-bottom: 80px !important;
+}
