@@ -1,3 +1,11 @@
-RewriteEngine On
-RewriteRule ^$ index.php [L]
-RewriteRule ^services/$ controllers/services/index.controller.php [L]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /portfolio/
+
+    # If the request is for a file or directory that exists, serve it directly.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Otherwise, rewrite the request to index.php, passing the path as a query parameter.
+    RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+</IfModule>

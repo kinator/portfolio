@@ -1,148 +1,65 @@
 <?php
-  try {
-    if (!isset($_SESSION)) {
-      session_start();
-    }
-
-    if (!isset($db)) {
-      $db = require "$root/lib/pdo.php";
-    }
-
-    $stmt = $db->query("SELECT id_as FROM annee_scolaire ORDER BY id_as DESC");
-    $years = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    if (isset($_SESSION['annee'])) {
-      $selected = $_SESSION['annee'];
-      $first_load = false;
-    } else {
-      $first_load = true;
-      $selected = $years[0]['id_as'];
-      $_SESSION['annee'] = $selected;
-    };
-
-  } catch (Throwable $e) {
-    echo ''. $e->getMessage() .'';
-  }
+if (isset($_SESSION['user']) && file_exists(dirname(__FILE__, 2) . '/class/authClass.php')) {
+  require_once dirname(__FILE__, 2) . '/class/authClass.php';
+}
 ?>
 
 <!-- Navbar -->
-<div class="w3-display-container top_header" style="min-height: 100px; max-height: 200px;">
-  <div class="w3-padding w3-display-left logo-container">
-    <img src="/img/logo.png" alt="Logo" class="logo" style="height: 75px">
-  </div>
-  <div class="w3-padding w3-display-middle w3-center">
-    <p class="title"><b><?= isset($pageTitle) ? sanitize($pageTitle) : 'Gestion du Département informatique' ?></b></p>
-  </div>
-  <div class="w3-padding w3-display-topright w3-margin" style="display:flex; flex-direction: row; justify-content: center; align-items: center">
-    <h4 class="title" style="padding-right: 20px"><?= $_SESSION['user']['nom_ens'] == 'admin_nom' ? 'admin' : sanitize($_SESSION['user']['nom_ens']) . " " . sanitize($_SESSION['user']['prenom_ens'])?></h4>
-    <img src="/img/exit.png" class="clickable" alt="exit" id="disconnectImg" style="height: 50px">
-  </div>
+<div class="w3-bar w3-white w3-card" id="myNavbar">
+    <a href="<?= $base_url ?>/" class="w3-bar-item w3-button w3-wide"><b>PORTFOLIO</b> JULIEN BEHANI</a>
+    <!-- Right-sided navbar links -->
+    <div class="w3-right w3-hide-small">
+      <a href="<?= $base_url ?>/" class="w3-bar-item w3-button"><i class="fa fa-home w3-margin-right"></i>ACCUEIL</a>
+      <a href="<?= $base_url ?>/projets" class="w3-bar-item w3-button"><i class="fa fa-folder-open w3-margin-right"></i>PROJETS</a>
+      <?php if (isset($_SESSION['user']) && authClass::checkPriviledAdmin($_SESSION['user']['nom_util'])) { ?>
+        <a href="<?= $base_url ?>/bd" class="w3-bar-item w3-button"><i class="fa fa-database w3-margin-right"></i>BASE DE DONNÉES</a>
+      <?php } ?>
+      <?php if (isset($_SESSION['user'])) : ?>
+        <div class="w3-dropdown-hover w3-right">
+          <button class="w3-button"><i class="fa fa-user w3-margin-right"></i><?= $_SESSION['user']['nom_ens'] == 'admin_nom' ? 'ADMIN' : strtoupper(sanitize($_SESSION['user']['prenom_ens'])) ?> <i class="fa fa-caret-down"></i></button>
+          <div class="w3-dropdown-content w3-bar-block w3-card-4">
+            <a href="<?= $base_url ?>/disconnect.php" class="w3-bar-item w3-button">Déconnexion</a>
+          </div>
+        </div>
+      <?php else : ?>
+        <a href="<?= $base_url ?>/login.php" class="w3-bar-item w3-button"><i class="fa fa-sign-in-alt w3-margin-right"></i>CONNEXION</a>
+      <?php endif; ?>
+    </div>
+    <!-- Hide right-floated links on small screens and replace them with a menu icon -->
+    <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium" onclick="w3_open()">
+      <i class="fa fa-bars"></i>
+    </a>
 </div>
 
-<div>
-  <nav class="w3-bar w3-card">
-    <form method='GET'>
-      <button type='submit' class="w3-bar-item w3-button headButton">
-        <b>Accueil</b>
-      </button>
-    </form>
-    <form method='GET'>
-      <input type='hidden' name='page' value='services'>
-      <button type='submit' class="w3-bar-item w3-button headButton">
-        <b>Services</b>
-      </button>
-    </form>
-    <form method='GET'>
-      <input type='hidden' name='page' value='maquette'>
-      <button type='submit' class="w3-bar-item w3-button headButton">
-        <b>Maquette</b>
-      </button>
-    </form>
-    <form method='GET'>
-      <input type='hidden' name='page' value='stats'>
-      <button type='submit' class="w3-bar-item w3-button headButton">
-        <b>Stats/données brutes</b>
-      </button>
-    </form>
-    <?php if (authClass::checkPriviledgeVacataire($_SESSION['user']['nom_util'])) { ?>
-    <form method='GET'>
-      <input type='hidden' name='page' value='vaca'>
-      <button type='submit' class="w3-bar-item w3-button headButton">
-        <b>Coordonnées des vacataires</b>
-      </button>
-    </form>
-    <?php } if (authClass::checkPriviledgeDatabase($_SESSION['user']['nom_util'])) { ?>
-    <form method='GET'>
-      <input type='hidden' name='page' value='bd'>
-      <button type='submit' class="w3-bar-item w3-button headButton">
-        <b>Base de données</b>
-      </button>
-    </form>
-    <?php } ?>
-    <select id="choose_year" class="w3-right w3-padding">
-      <?php
-      echo authClass::checkPriviledgeDatabase($_SESSION['user']['nom_util']) ? "<option value='new_year'>Créer année</option>" : "";
-      ?>
-      <?php foreach ($years as $year) { ?>
-        <option value="<?= $year['id_as'] ?>" <?php if ($selected == $year['id_as']) echo 'selected' ?>><?= sanitize($year['id_as']) ?></option>
-      <?php } ?>
-    </select>
-  </nav>
-</div>
+<!-- Sidebar on small screens when clicking the menu icon -->
+<nav class="w3-sidebar w3-bar-block w3-black w3-card w3-animate-left w3-hide-medium w3-hide-large" style="display:none" id="mySidebar">
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-bar-item w3-button w3-large w3-padding-16">Fermer ×</a>
+  <a href="<?= $base_url ?>/" onclick="w3_close()" class="w3-bar-item w3-button">ACCUEIL</a>
+  <a href="<?= $base_url ?>/projets" onclick="w3_close()" class="w3-bar-item w3-button">PROJETS</a>
+  <?php if (isset($_SESSION['user']) && authClass::checkPriviledAdmin($_SESSION['user']['nom_util'])) { ?>
+    <a href="<?= $base_url ?>/bd" onclick="w3_close()" class="w3-bar-item w3-button">BASE DE DONNÉES</a>
+  <?php } ?>
+  <?php if (isset($_SESSION['user'])) : ?>
+    <a href="<?= $base_url ?>/disconnect.php" class="w3-bar-item w3-button">DÉCONNEXION</a>
+  <?php else : ?>
+    <a href="<?= $base_url ?>/login.php" class="w3-bar-item w3-button">CONNEXION</a>
+  <?php endif; ?>
+</nav>
 
 <script>
-  <?php
-  echo authClass::checkPriviledgeDatabase($_SESSION['user']['nom_util']) && (isset($first_load) && $first_load === true) ? "document.getElementById('mySelect').selectedIndex = 0;" : "";
-  ?>
+// Toggle between showing and hiding the sidebar when clicking the menu icon
+var mySidebar = document.getElementById("mySidebar");
 
-  document.getElementById('disconnectImg').addEventListener('click', function() {
-      window.location.href = '/disconnect.php';
-  });
-
-  document.querySelectorAll('.headButton').forEach(button => {
-    button.addEventListener('click', function () {
-      const pageUrl = this.getAttribute('data-url')
-      window.location.href = pageUrl;
-    });
-  });
-
-  document.getElementById('choose_year').addEventListener('change', function() {
-    if (this.value === 'new_year') {
-      window.location.href = 'index.php?page=new_year';
-      return;
-    }
-    $.ajax({
-      url: '/inc/top.year.ajax.php',
-      type: 'POST',
-      data: {
-        selected: this.value
-      },
-      success: function(response) {
-        location.reload();
-      }
-    });
-  });
-
-  function adjustTextSize() {
-    const textElements = document.querySelectorAll('.title');
-    const screenWidth = window.innerWidth;
-
-    let fontSize;
-    if (screenWidth < 700) {
-      fontSize = '0px';
-    } else if (screenWidth < 800) {
-      fontSize = '12px';
-    } else if (screenWidth < 1100) {
-      fontSize = '16px';
-    } else {
-      fontSize = '24px';
-    }
-
-    textElements.forEach(element => {
-      element.style.fontSize = fontSize;
-    });
+function w3_open() {
+  if (mySidebar.style.display === 'block') {
+    mySidebar.style.display = 'none';
+  } else {
+    mySidebar.style.display = 'block';
   }
+}
 
-  window.addEventListener('load', adjustTextSize);
-  window.addEventListener('resize', adjustTextSize);
+// Close the sidebar with the close button
+function w3_close() {
+    mySidebar.style.display = "none";
+}
 </script>

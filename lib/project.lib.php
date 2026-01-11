@@ -132,3 +132,16 @@ function getInputType($type, $pdo = false): string {
     }
   }
 }
+
+function getTags($db)
+{
+    if (!$db) {
+        return [];
+    }
+    try {
+        $stmt = $db->query("SELECT * FROM competences");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        return [];
+    }
+}

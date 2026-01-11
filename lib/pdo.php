@@ -2,23 +2,25 @@
 try {
     // Autoloader
     require_once dirname(__FILE__) . '/../vendor/autoload.php';
-    $dotenv = Dotenv\Dotenv::createImmutable(dirname(__FILE__) . '/../');
+    $dotenv = Dotenv\Dotenv::createImmutable(dirname(__FILE__, 2));
     $dotenv->load();
 
     // Récupération des informations présentes dans le fichier de conf .env
-    $db_host = $_ENV['DB_HOST'];
-    $db_name = $_ENV['DB_NAME'];
-    $db_port = $_ENV['DB_PORT'];
-    $db_username = $_ENV['DB_USER'];
-    $db_password = $_ENV['DB_PASS'];
+    $db_host = $_ENV['DB_HOST'] ?? null;
+    $db_name = $_ENV['DB_NAME'] ?? null;
+    $db_port = $_ENV['DB_PORT'] ?? null;
+    $db_username = $_ENV['DB_USER'] ?? null;
+    $db_password = $_ENV['DB_PASS'] ?? null;
 
     if (
         empty($db_host)
         || empty($db_name)
         || empty($db_username)
-        || empty($db_password)
+        || empty($db_port)
+        || !isset($db_password)
     ) {
         $_SESSION['mesgs']['errors'][] = 'ERREUR Configuration: les informations n\'ont pas pu être chargées.';
+        return null;
     }
 
     // ouverture de la connexion
@@ -30,6 +32,7 @@ try {
     } catch (PDOException $e) {
         $db = null;
         $_SESSION['mesgs']['errors'][] = 'ERREUR Base de données: ' . $e->getMessage();
+        return null;
     }
 } catch (Exception $e) {
     echo 'ERREUR: ' . $e->getMessage();

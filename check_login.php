@@ -29,4 +29,5 @@ if (isset($_POST['connect'])) {
     }
 }
 
-header('Location:index.php');
+$base_url = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+header('Location: ' . $base_url . '/');

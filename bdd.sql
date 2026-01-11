@@ -39,7 +39,6 @@ INSERT INTO utilisateurs (nom_util, mdp, admin) VALUES
 
 INSERT INTO competences (id_comp, name, description) VALUES
 ('GIT', 'Git', 'Gestion de versions décentralisée.'),
-('OPTIMISATION', 'Optimisation', 'Amélioration des performances et de l''efficacité.'),
 -- Web
 ('HTML', 'HTML', 'Langage de balisage pour le Web.'),
 ('CSS', 'CSS', 'Feuilles de style en cascade pour la mise en forme de pages Web.'),
