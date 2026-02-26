@@ -3,7 +3,7 @@ class authClass
 {
 	public static function is_auth($current_session)
 	{
-		if (isset($current_session['user']) && !empty($current_session['user']))
+		if (isset($current_session['user']) && !empty($current_session['user']) && isset($current_session['auth_token']))
 			return true;
 		return false;
 	}
@@ -40,7 +40,7 @@ class authClass
 				"admin",
 			);
 			$sql = "SELECT distinct ".implode(", ", $fields)."
-					FROM privileges_utilisateurs
+					FROM utilisateurs
 					WHERE nom_util = :nom_util ";
 			$statement = $db->prepare($sql);
 			$statement->bindValue(':nom_util', $username, PDO::PARAM_STR);

@@ -23,6 +23,7 @@ if (isset($_POST['connect'])) {
         $_SESSION['titulaire'] = $user['titulaire_ens'];
         $_SESSION['admin'] = $user['admin'];
         $_SESSION['user'] = $user;
+        $_SESSION['auth_token'] = bin2hex(random_bytes(32));
     }
     else{
         $_SESSION['mesgs']['errors'][] = 'Identification impossible';

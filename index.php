@@ -13,7 +13,11 @@ $page = $requestPath === '' ? null : $requestPath;
 // Define all routes and whether they require authentication
 $routes = [
     'projets'  => ['controller' => "$root/controllers/projets/index.controller.php", 'auth' => false],
+    'contact'  => ['controller' => "$root/controllers/contact/index.controller.php", 'auth' => false],
     'bd'       => ['controller' => "$root/controllers/database/index.controller.php", 'auth' => true],
+    'dashboard'=> ['controller' => "$root/controllers/dashboard/index.controller.php", 'auth' => true],
+    'import_github'=> ['controller' => "$root/controllers/dashboard/import_github.controller.php", 'auth' => true],
+    'delete_project'=> ['controller' => "$root/controllers/dashboard/delete_project.controller.php", 'auth' => true],
     null       => ['controller' => "$root/controllers/accueil/index.controller.php", 'auth' => false]
 ];
 

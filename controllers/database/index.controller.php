@@ -9,7 +9,12 @@ if (!isset($_SESSION)) {
 }
 define('SELECTED_YEAR', $_SESSION['annee']);
 
-if (!authClass::checkPriviledgeDatabase($_SESSION['user']['nom_util'])) {
+if (!isset($_SESSION['auth_token'])) {
+  header('location: index');
+  exit();
+}
+
+if (!authClass::checkPriviledAdmin($_SESSION['user']['nom_util'])) {
   header('location: index');
 }
 

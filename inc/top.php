@@ -5,14 +5,18 @@ if (isset($_SESSION['user']) && file_exists(dirname(__FILE__, 2) . '/class/authC
 ?>
 
 <!-- Navbar -->
-<div class="w3-bar w3-white w3-card" id="myNavbar">
+<div class="w3-bar w3-blue-grey w3-card" id="myNavbar">
     <a href="<?= $base_url ?>/" class="w3-bar-item w3-button w3-wide"><b>PORTFOLIO</b> JULIEN BEHANI</a>
     <!-- Right-sided navbar links -->
     <div class="w3-right w3-hide-small">
       <a href="<?= $base_url ?>/" class="w3-bar-item w3-button"><i class="fa fa-home w3-margin-right"></i>ACCUEIL</a>
       <a href="<?= $base_url ?>/projets" class="w3-bar-item w3-button"><i class="fa fa-folder-open w3-margin-right"></i>PROJETS</a>
+      <a href="<?= $base_url ?>/contact" class="w3-bar-item w3-button"><i class="fa fa-envelope w3-margin-right"></i>CONTACT</a>
       <?php if (isset($_SESSION['user']) && authClass::checkPriviledAdmin($_SESSION['user']['nom_util'])) { ?>
         <a href="<?= $base_url ?>/bd" class="w3-bar-item w3-button"><i class="fa fa-database w3-margin-right"></i>BASE DE DONNÉES</a>
+      <?php } ?>
+      <?php if (isset($_SESSION['user']) && authClass::checkPriviledAdmin($_SESSION['user']['nom_util'])) { ?>
+        <a href="<?= $base_url ?>/dashboard" class="w3-bar-item w3-button"><i class="fa fa-database w3-margin-right"></i>Dashboard</a>
       <?php } ?>
       <?php if (isset($_SESSION['user'])) : ?>
         <div class="w3-dropdown-hover w3-right">
