@@ -8,6 +8,12 @@ if (!isset($_SESSION['login']) || !isset($_SESSION['auth_token'])) {
 // Connect to DB
 $pdo = require $root . '/lib/pdo.php';
 
+/**
+ * Helper function to fetch data from GitHub API.
+ *
+ * @param string $url The API URL to fetch.
+ * @return mixed|null Decoded JSON response or null on failure.
+ */
 function fetchGithub($url) {
     $opts = [
         'http' => [
@@ -22,7 +28,14 @@ function fetchGithub($url) {
     return $data ? json_decode($data, true) : null;
 }
 
+/**
+ * Handles all POST requests (Add, Update, Import) and AJAX GET requests (Fetch project data).
+ *
+ * @param PDO $pdo Database connection object.
+ * @param string $root Root directory path for file operations.
+ */
 function handleEditRequest($pdo, $root) {
+    // Handle AJAX request to retrieve project details for the edit modal
     if (isset($_GET['ajax']) && $_GET['ajax'] === 'get_project' && isset($_GET['id'])) {
         header('Content-Type: application/json');
         try {
@@ -41,6 +54,7 @@ function handleEditRequest($pdo, $root) {
         exit;
     }
 
+    // Handle project deletion request
     if (isset($_GET['action']) && $_GET['action'] === 'delete_project' && isset($_GET['id'])) {
         $id = $_GET['id'];
         try {
@@ -76,8 +90,10 @@ function handleEditRequest($pdo, $root) {
         exit;
     }
 
+    // Handle POST form submissions
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array($_POST['action'], ['add_project', 'update_project', 'import_github'])) {
         try {
+            // Action: Import projects from GitHub
             if ($_POST['action'] === 'import_github') {
                 if (!empty($_POST['github_username'])) {
                     $username = $_POST['github_username'];
@@ -174,6 +190,7 @@ function handleEditRequest($pdo, $root) {
                     }
                 }
             } else {
+                // Action: Add or Update a project manually
                 $visibilite = isset($_POST['visibilite_proj']) ? 1 : 0;
                 if ($_POST['action'] === 'add_project') {
                     $stmt = $pdo->prepare("INSERT INTO projets (nom_proj, desc_proj, commentaire_proj, lien_proj, visible) VALUES (?, ?, ?, ?, ?)");
@@ -185,6 +202,7 @@ function handleEditRequest($pdo, $root) {
                     $stmt = $pdo->prepare("UPDATE projets SET nom_proj = ?, desc_proj = ?, commentaire_proj = ?, lien_proj = ?, visible = ? WHERE id_proj = ?");
                     $stmt->execute([$_POST['nom_proj'], $_POST['desc_proj'], $_POST['commentaire_proj'], $_POST['lien_proj'], $visibilite, $projectId]);
 
+                    // Handle image deletion if requested
                     if (isset($_POST['delete_images']) && is_array($_POST['delete_images'])) {
                         $delStmt = $pdo->prepare("DELETE FROM images WHERE id_img = ?");
                         $pathStmt = $pdo->prepare("SELECT url_img FROM images WHERE id_img = ?");
@@ -198,7 +216,7 @@ function handleEditRequest($pdo, $root) {
                     $_SESSION['mesgs']['confirm'][] = "Projet mis à jour.";
                 }
 
-                // Common image upload logic
+                // Handle new image uploads
                 if (isset($_FILES['new_images'])) {
                     $targetDir = $root . '/img/projects/';
                     if (!is_dir($targetDir)) {
@@ -247,12 +265,14 @@ function handleEditRequest($pdo, $root) {
     }
 }
 
+// Execute request handler if DB connection is active
 if ($pdo) {
     handleEditRequest($pdo, $root);
 }
 
 $projects = [];
 
+// Fetch all projects for display in the dashboard list
 if ($pdo) {
     try {
         $query = "SELECT * FROM projects_view ORDER BY id_proj DESC";

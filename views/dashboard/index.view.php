@@ -3,7 +3,7 @@ include $root . '/inc/head.php';
 ?>
 
 <div class="w3-container w3-padding-32">
-    <!-- Import GitHub -->
+    <!-- Import GitHub Section -->
     <div class="w3-card w3-white w3-margin-bottom w3-round">
         <header class="w3-container w3-light-grey">
             <h3>Importer depuis GitHub</h3>
@@ -18,7 +18,7 @@ include $root . '/inc/head.php';
         </div>
     </div>
 
-    <!-- Projects List -->
+    <!-- Projects List Section -->
     <div class="w3-card w3-white w3-round">
         <div class="w3-container w3-light-grey w3-padding">
             <h2 class="w3-left" style="margin:0">Gestion des Projets</h2>
@@ -42,6 +42,7 @@ include $root . '/inc/head.php';
                                 <td><?= htmlspecialchars($project['nom_proj']) ?></td>
                                 <td><?= htmlspecialchars($project['desc_proj']) ?></td>
                                 <td>
+                                    <!-- Display skills as tags -->
                                     <?php 
                                     $skills = trim($project['competences'] ?? '', '{}');
                                     if ($skills) {
@@ -70,7 +71,7 @@ include $root . '/inc/head.php';
     </div>
 </div>
 
-<!-- Edit Modal -->
+<!-- Edit/Add Project Modal -->
 <div id="editModal" class="w3-modal">
     <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-round" style="max-width:600px">
         <header class="w3-container w3-blue-grey w3-round-top"> 
@@ -113,6 +114,12 @@ include $root . '/inc/head.php';
 </div>
 
 <script>
+/**
+ * Opens the modal for adding or editing a project.
+ * If an ID is provided, it fetches project data via AJAX and populates the form.
+ * 
+ * @param {number|null} id Project ID to edit, or null to add new
+ */
 function openModal(id = null) {
     document.getElementById('editModal').style.display='block';
     const form = document.getElementById('edit_form');
