@@ -9,7 +9,8 @@ include $root . '/inc/head.php';
             <h3>Importer depuis GitHub</h3>
         </header>
         <div class="w3-container w3-padding">
-            <form action="import_github" method="post" class="w3-container">
+            <form action="dashboard" method="post" class="w3-container">
+                <input type="hidden" name="action" value="import_github">
                 <label>Nom d'utilisateur GitHub</label>
                 <input class="w3-input w3-border w3-round" type="text" name="github_username" placeholder="Nom d'utilisateur GitHub" required>
                 <button type="submit" class="w3-button w3-black w3-margin-top w3-round">Importer</button>
@@ -54,7 +55,7 @@ include $root . '/inc/head.php';
                                 </td>
                                 <td>
                                     <button onclick="openModal(<?= $project['id_proj'] ?>)" class="w3-button w3-tiny w3-amber w3-round">Éditer</button>
-                                    <a href="delete_project?id=<?= $project['id_proj'] ?>" class="w3-button w3-tiny w3-red w3-round" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')">Supprimer</a>
+                                    <a href="dashboard?action=delete_project&id=<?= $project['id_proj'] ?>" class="w3-button w3-tiny w3-red w3-round" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')">Supprimer</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
