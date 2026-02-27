@@ -15,6 +15,18 @@ if (isset($_GET['id'])) {
         $stmtComp = $pdo->prepare("DELETE FROM projets_competences WHERE id_proj = ?");
         $stmtComp->execute([$id]);
 
+        // Delete associated images
+        $stmtImg = $pdo->prepare("SELECT img_url FROM projets_images WHERE id_proj = ?");
+        $stmtImg->execute([$id]);
+        $images = $stmtImg->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($images as $img) {
+            if ($img && file_exists($root . '/' . $img)) {
+                unlink($root . '/' . $img);
+            }
+        }
+        $stmtDelImg = $pdo->prepare("DELETE FROM projets_images WHERE id_proj = ?");
+        $stmtDelImg->execute([$id]);
+
         // Delete the project
         $stmtProj = $pdo->prepare("DELETE FROM projets WHERE id_proj = ?");
         $stmtProj->execute([$id]);

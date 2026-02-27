@@ -23,15 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['github_username'])) 
     }
 
     // Fetch repos (limit to 100)
-    $repos = fetchGithub("https://api.github.com/users/" . urlencode($username) . "/repos?per_page=100");
+    $repos = fetchGithub("https://api.github.com/users/" . urlencode($username) . "/repos?per_page=1000");
 
     if ($repos && is_array($repos)) {
         $count = 0;
         
         // Prepare statements
         $stmtCheck = $pdo->prepare("SELECT id_proj FROM projets WHERE nom_proj = ?");
-        $stmtInsert = $pdo->prepare("INSERT INTO projets (nom_proj, commentaire_proj) VALUES (?, ?)");
-        $stmtUpdate = $pdo->prepare("UPDATE projets SET commentaire_proj = ? WHERE id_proj = ?");
+        $stmtInsert = $pdo->prepare("INSERT INTO projets (nom_proj, desc_proj, commentaire_proj, lien_proj) VALUES (?, ?, ?, ?)");
         $stmtLink = $pdo->prepare("INSERT INTO projets_competences (id_proj, id_comp) VALUES (?, ?) ON CONFLICT DO NOTHING");
 
         // Load competencies map to match GitHub languages to DB IDs
@@ -61,17 +60,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['github_username'])) 
 
             $name = $repo['name'];
             $desc = $repo['description'] ?? '';
+            $link = $repo['html_url'] ?? '';
             
             // Check if project exists
             $stmtCheck->execute([$name]);
             $existing = $stmtCheck->fetch(PDO::FETCH_ASSOC);
             
             $projId = null;
-            if ($existing) {
-                $projId = $existing['id_proj'];
-                $stmtUpdate->execute([$desc, $projId]);
-            } else {
-                $stmtInsert->execute([$name, $desc]);
+            if (!$existing) {
+                $stmtInsert->execute([$name, $desc, '', $link]);
                 $projId = $pdo->lastInsertId();
                 $count++;
             }

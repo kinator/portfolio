@@ -50,6 +50,20 @@ if (isset($_SESSION['user']) && file_exists(dirname(__FILE__, 2) . '/class/authC
   <?php endif; ?>
 </nav>
 
+<?php
+if (isset($_SESSION['mesgs'])) {
+    foreach ($_SESSION['mesgs'] as $type => $msgs) {
+        foreach ($msgs as $msg) {
+            $color = $type === 'errors' ? 'w3-red' : 'w3-green';
+            echo '<div class="w3-panel ' . $color . ' w3-display-container" style="margin:0;">';
+            echo '<span onclick="this.parentElement.style.display=\'none\'" class="w3-button w3-large w3-display-topright">&times;</span>';
+            echo '<p>' . htmlspecialchars($msg) . '</p>';
+            echo '</div>';
+        }
+    }
+    unset($_SESSION['mesgs']);
+}
+?>
 <script>
 // Toggle between showing and hiding the sidebar when clicking the menu icon
 var mySidebar = document.getElementById("mySidebar");

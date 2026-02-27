@@ -14,7 +14,10 @@ CREATE TABLE IF NOT EXISTS competences (
 CREATE TABLE IF NOT EXISTS projets (
   id_proj SERIAL PRIMARY KEY,
   nom_proj VARCHAR(255) NOT NULL,
-  commentaire_proj VARCHAR(4096)
+  desc_proj VARCHAR(4096),
+  commentaire_proj VARCHAR(4096),
+  lien_proj VARCHAR(4096),
+  visible BOOLEAN DEFAULT FALSE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS projets_competences (
@@ -23,13 +26,22 @@ CREATE TABLE IF NOT EXISTS projets_competences (
   PRIMARY KEY (id_proj, id_comp)
 );
 
+CREATE TABLE IF NOT EXISTS images (
+  id_img SERIAL PRIMARY KEY,
+  id_proj INTEGER REFERENCES projets(id_proj) ON DELETE CASCADE,
+  url_img VARCHAR(2048) NOT NULL
+);
+
 
 -- VUES
-CREATE VIEW projects_view AS
-SELECT p.id_proj, p.nom_proj, p.commentaire_proj, array_agg(c.name) AS competences
+CREATE OR REPLACE VIEW projects_view AS
+SELECT p.id_proj, p.nom_proj, p.commentaire_proj, 
+       array_agg(DISTINCT c.name) AS competences,
+       array_agg(DISTINCT i.url_img) AS images
 FROM projets p
 LEFT JOIN projets_competences pc ON p.id_proj = pc.id_proj
 LEFT JOIN competences c ON pc.id_comp = c.id_comp
+LEFT JOIN images i ON p.id_proj = i.id_proj
 GROUP BY p.id_proj, p.nom_proj, p.commentaire_proj;
 
 
@@ -58,4 +70,4 @@ INSERT INTO competences (id_comp, name, description) VALUES
 ('NOSQL', 'NoSQL', 'Bases de données non relationnelles.'),
 -- Systèmes
 ('LINUX', 'Linux', 'Administration de systèmes d''exploitation Linux/Unix.'),
-('DOCKER', 'Docker', 'Technologie de conteneurisation d''applications.'),
+('DOCKER', 'Docker', 'Technologie de conteneurisation d''applications.')

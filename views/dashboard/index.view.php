@@ -21,7 +21,7 @@ include $root . '/inc/head.php';
     <div class="w3-card w3-white w3-round">
         <div class="w3-container w3-light-grey w3-padding">
             <h2 class="w3-left" style="margin:0">Gestion des Projets</h2>
-            <a href="add_project.php" class="w3-button w3-blue w3-right w3-round">+ Nouveau Projet</a>
+            <button onclick="openModal()" class="w3-button w3-blue w3-right w3-round">+ Nouveau Projet</button>
         </div>
         
         <div class="w3-responsive">
@@ -39,7 +39,7 @@ include $root . '/inc/head.php';
                         <?php foreach ($projects as $project): ?>
                             <tr>
                                 <td><?= htmlspecialchars($project['nom_proj']) ?></td>
-                                <td><?= htmlspecialchars($project['commentaire_proj']) ?></td>
+                                <td><?= htmlspecialchars($project['desc_proj']) ?></td>
                                 <td>
                                     <?php 
                                     $skills = trim($project['competences'] ?? '', '{}');
@@ -53,7 +53,7 @@ include $root . '/inc/head.php';
                                     ?>
                                 </td>
                                 <td>
-                                    <a href="edit_project.php?id=<?= $project['id_proj'] ?>" class="w3-button w3-tiny w3-amber w3-round">Éditer</a>
+                                    <button onclick="openModal(<?= $project['id_proj'] ?>)" class="w3-button w3-tiny w3-amber w3-round">Éditer</button>
                                     <a href="delete_project?id=<?= $project['id_proj'] ?>" class="w3-button w3-tiny w3-red w3-round" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')">Supprimer</a>
                                 </td>
                             </tr>
@@ -68,5 +68,91 @@ include $root . '/inc/head.php';
         </div>
     </div>
 </div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-round" style="max-width:600px">
+        <header class="w3-container w3-blue-grey w3-round-top"> 
+            <span onclick="document.getElementById('editModal').style.display='none'" class="w3-button w3-display-topright w3-round">&times;</span>
+            <h3 id="modal_title">Éditer le projet</h3>
+        </header>
+        <form id="edit_form" method="post" enctype="multipart/form-data" class="w3-container w3-padding">
+            <input type="hidden" name="action" value="update_project">
+            <input type="hidden" name="id_proj" id="edit_id_proj">
+            
+            <label>Nom du Projet</label>
+            <input class="w3-input w3-border w3-round" type="text" name="nom_proj" id="edit_nom_proj" required>
+            
+            <label>Description</label>
+            <textarea class="w3-input w3-border w3-round" name="desc_proj" id="edit_desc_proj" rows="3" style="resize:vertical"></textarea>
+
+            <label>Commentaire</label>
+            <textarea class="w3-input w3-border w3-round" name="commentaire_proj" id="edit_commentaire_proj" rows="3" style="resize:vertical"></textarea>
+            
+            <label>Lien</label>
+            <input class="w3-input w3-border w3-round" type="text" name="lien_proj" id="edit_lien_proj">
+            
+            <div id="current_images_container">
+                <label>Images actuelles</label>
+                <div id="current_images" class="w3-row-padding w3-margin-bottom w3-border w3-round w3-padding"></div>
+            </div>
+            
+            <label>Ajouter des images</label>
+            <input class="w3-input w3-border w3-round" type="file" name="new_images[]" multiple accept="image/*">
+            
+            <button type="submit" id="modal_submit_button" class="w3-button w3-green w3-margin-top w3-round w3-right">Sauvegarder</button>
+        </form>
+        <div class="w3-container w3-padding-16"></div>
+    </div>
+</div>
+
+<script>
+function openModal(id = null) {
+    document.getElementById('editModal').style.display='block';
+    const form = document.getElementById('edit_form');
+    form.reset();
+
+    const modalTitle = document.getElementById('modal_title');
+    const submitButton = document.getElementById('modal_submit_button');
+    const currentImagesContainer = document.getElementById('current_images_container');
+    const currentImagesDiv = document.getElementById('current_images');
+    const actionInput = form.querySelector('input[name="action"]');
+    const idInput = document.getElementById('edit_id_proj');
+
+    if (id) { // Edit mode
+        modalTitle.textContent = 'Éditer le projet';
+        submitButton.textContent = 'Sauvegarder';
+        actionInput.value = 'update_project';
+        currentImagesContainer.style.display = 'block';
+        currentImagesDiv.innerHTML = '<p>Chargement...</p>';
+        
+        fetch('<?= $base_url ?>/dashboard?ajax=get_project&id=' + id)
+        .then(res => res.json())
+        .then(data => {
+            if(data.error) { alert(data.error); return; }
+            idInput.value = data.id_proj;
+            document.getElementById('edit_nom_proj').value = data.nom_proj;
+            document.getElementById('edit_desc_proj').value = data.desc_proj;
+            document.getElementById('edit_commentaire_proj').value = data.commentaire_proj;
+            document.getElementById('edit_lien_proj').value = data.lien_proj;
+            
+            let html = '';
+            if(data.images && data.images.length) {
+                data.images.forEach(img => {
+                    html += '<div class="w3-col s4 w3-center w3-margin-bottom"><img src="<?= $base_url ?>/'+img.img_url+'" style="width:100%;height:80px;object-fit:cover" class="w3-round"><br><label><input type="checkbox" name="delete_images[]" value="'+img.id_img+'"> Supprimer</label></div>';
+                });
+            } else { html = '<p>Aucune image.</p>'; }
+            currentImagesDiv.innerHTML = html;
+        });
+    } else { // Add mode
+        modalTitle.textContent = 'Ajouter un projet';
+        submitButton.textContent = 'Ajouter';
+        actionInput.value = 'add_project';
+        idInput.value = '';
+        currentImagesContainer.style.display = 'none';
+        currentImagesDiv.innerHTML = '';
+    }
+}
+</script>
 
 <?php include $root . '/inc/footer.php'; ?>
