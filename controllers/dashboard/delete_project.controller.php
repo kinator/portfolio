@@ -16,7 +16,7 @@ if (isset($_GET['id'])) {
         $stmtComp->execute([$id]);
 
         // Delete associated images
-        $stmtImg = $pdo->prepare("SELECT img_url FROM projets_images WHERE id_proj = ?");
+        $stmtImg = $pdo->prepare("SELECT url_img FROM images WHERE id_proj = ?");
         $stmtImg->execute([$id]);
         $images = $stmtImg->fetchAll(PDO::FETCH_COLUMN);
         foreach ($images as $img) {
@@ -24,7 +24,7 @@ if (isset($_GET['id'])) {
                 unlink($root . '/' . $img);
             }
         }
-        $stmtDelImg = $pdo->prepare("DELETE FROM projets_images WHERE id_proj = ?");
+        $stmtDelImg = $pdo->prepare("DELETE FROM images WHERE id_proj = ?");
         $stmtDelImg->execute([$id]);
 
         // Delete the project

@@ -92,6 +92,11 @@ include $root . '/inc/head.php';
             <label>Lien</label>
             <input class="w3-input w3-border w3-round" type="text" name="lien_proj" id="edit_lien_proj">
             
+            <p>
+                <input class="w3-check" type="checkbox" name="visibilite_proj" id="edit_visibilite_proj" value="1">
+                <label>Visible</label>
+            </p>
+
             <div id="current_images_container">
                 <label>Images actuelles</label>
                 <div id="current_images" class="w3-row-padding w3-margin-bottom w3-border w3-round w3-padding"></div>
@@ -135,11 +140,12 @@ function openModal(id = null) {
             document.getElementById('edit_desc_proj').value = data.desc_proj;
             document.getElementById('edit_commentaire_proj').value = data.commentaire_proj;
             document.getElementById('edit_lien_proj').value = data.lien_proj;
+            document.getElementById('edit_visibilite_proj').checked = (data.visible === true);
             
             let html = '';
             if(data.images && data.images.length) {
                 data.images.forEach(img => {
-                    html += '<div class="w3-col s4 w3-center w3-margin-bottom"><img src="<?= $base_url ?>/'+img.img_url+'" style="width:100%;height:80px;object-fit:cover" class="w3-round"><br><label><input type="checkbox" name="delete_images[]" value="'+img.id_img+'"> Supprimer</label></div>';
+                    html += '<div class="w3-col s4 w3-center w3-margin-bottom"><img src="<?= $base_url ?>/'+img.url_img+'" style="width:100%;height:80px;object-fit:cover" class="w3-round"><br><label><input type="checkbox" name="delete_images[]" value="'+img.id_img+'"> Supprimer</label></div>';
                 });
             } else { html = '<p>Aucune image.</p>'; }
             currentImagesDiv.innerHTML = html;
@@ -149,6 +155,7 @@ function openModal(id = null) {
         submitButton.textContent = 'Ajouter';
         actionInput.value = 'add_project';
         idInput.value = '';
+        document.getElementById('edit_visibilite_proj').checked = false;
         currentImagesContainer.style.display = 'none';
         currentImagesDiv.innerHTML = '';
     }

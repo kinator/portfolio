@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS images (
 
 -- VUES
 CREATE OR REPLACE VIEW projects_view AS
-SELECT p.id_proj as id_proj, p.nom_proj as nom_proj, p.desc_proj as desc_proj, p.commentaire_proj as commentaire_proj, 
+SELECT p.id_proj as id_proj, p.nom_proj as nom_proj, p.desc_proj as desc_proj, p.commentaire_proj as commentaire_proj, p.lien_proj as lien_proj,
        array_agg(DISTINCT c.name) AS competences,
        array_agg(DISTINCT i.url_img) AS images,
        p.visible AS visible

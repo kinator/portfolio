@@ -17,7 +17,7 @@ function handleEditRequest($pdo, $root) {
             $project = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($project) {
                 try {
-                    $stmtImg = $pdo->prepare("SELECT * FROM projets_images WHERE id_proj = ?");
+                    $stmtImg = $pdo->prepare("SELECT * FROM images WHERE id_proj = ?");
                     $stmtImg->execute([$_GET['id']]);
                     $project['images'] = $stmtImg->fetchAll(PDO::FETCH_ASSOC);
                 } catch (PDOException $e) { $project['images'] = []; }
@@ -29,19 +29,20 @@ function handleEditRequest($pdo, $root) {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array($_POST['action'], ['add_project', 'update_project'])) {
         try {
+            $visibilite = isset($_POST['visibilite_proj']) ? true : false;
             if ($_POST['action'] === 'add_project') {
-                $stmt = $pdo->prepare("INSERT INTO projets (nom_proj, desc_proj, commentaire_proj, lien_proj) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$_POST['nom_proj'], $_POST['desc_proj'], $_POST['commentaire_proj'], $_POST['lien_proj']]);
+                $stmt = $pdo->prepare("INSERT INTO projets (nom_proj, desc_proj, commentaire_proj, lien_proj, visible) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$_POST['nom_proj'], $_POST['desc_proj'], $_POST['commentaire_proj'], $_POST['lien_proj'], $visibilite]);
                 $projectId = $pdo->lastInsertId();
                 $_SESSION['mesgs']['confirm'][] = "Projet ajouté avec succès.";
             } else { // update_project
                 $projectId = $_POST['id_proj'];
-                $stmt = $pdo->prepare("UPDATE projets SET nom_proj = ?, desc_proj = ?, commentaire_proj = ?, lien_proj = ? WHERE id_proj = ?");
-                $stmt->execute([$_POST['nom_proj'], $_POST['desc_proj'], $_POST['commentaire_proj'], $_POST['lien_proj'], $projectId]);
+                $stmt = $pdo->prepare("UPDATE projets SET nom_proj = ?, desc_proj = ?, commentaire_proj = ?, lien_proj = ?, visible = ? WHERE id_proj = ?");
+                $stmt->execute([$_POST['nom_proj'], $_POST['desc_proj'], $_POST['commentaire_proj'], $_POST['lien_proj'], $visibilite, $projectId]);
 
                 if (isset($_POST['delete_images']) && is_array($_POST['delete_images'])) {
-                    $delStmt = $pdo->prepare("DELETE FROM projets_images WHERE id_img = ?");
-                    $pathStmt = $pdo->prepare("SELECT img_url FROM projets_images WHERE id_img = ?");
+                    $delStmt = $pdo->prepare("DELETE FROM images WHERE id_img = ?");
+                    $pathStmt = $pdo->prepare("SELECT url_img FROM images WHERE id_img = ?");
                     foreach ($_POST['delete_images'] as $imgId) {
                         $pathStmt->execute([$imgId]);
                         $path = $pathStmt->fetchColumn();
@@ -55,15 +56,40 @@ function handleEditRequest($pdo, $root) {
             // Common image upload logic
             if (isset($_FILES['new_images'])) {
                 $targetDir = $root . '/img/projects/';
-                if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
-                $insStmt = $pdo->prepare("INSERT INTO projets_images (id_proj, img_url) VALUES (?, ?)");
+                if (!is_dir($targetDir)) {
+                    if (!mkdir($targetDir, 0777, true)) {
+                        throw new Exception("Impossible de créer le dossier d'images.");
+                    }
+                }
+                if (!is_writable($targetDir)) throw new Exception("Le dossier d'images n'est pas accessible en écriture.");
+                $insStmt = $pdo->prepare("INSERT INTO images (id_proj, url_img) VALUES (?, ?)");
                 foreach ($_FILES['new_images']['tmp_name'] as $k => $tmp) {
-                    if (is_uploaded_file($tmp) && $_FILES['new_images']['error'][$k] === UPLOAD_ERR_OK) {
-                        $ext = pathinfo($_FILES['new_images']['name'][$k], PATHINFO_EXTENSION);
-                        $fname = uniqid('proj_') . '.' . $ext;
-                        if (move_uploaded_file($tmp, $targetDir . $fname)) {
-                            $insStmt->execute([$projectId, 'img/projects/' . $fname]);
+                    $error = $_FILES['new_images']['error'][$k];
+                    if ($error === UPLOAD_ERR_OK) {
+                        if (is_uploaded_file($tmp)) {
+                            $info = pathinfo($_FILES['new_images']['name'][$k]);
+                            $ext = $info['extension'];
+                            $name = preg_replace('/[^a-zA-Z0-9_-]/', '_', $info['filename']);
+                            $fname = uniqid('proj_') . '_' . $name . '.' . $ext;
+                            if (move_uploaded_file($tmp, $targetDir . $fname)) {
+                                $insStmt->execute([$projectId, 'img/projects/' . $fname]);
+                            } else {
+                                $err = error_get_last();
+                                $_SESSION['mesgs']['errors'][] = "Erreur lors de l'enregistrement de l'image " . $_FILES['new_images']['name'][$k] . " : " . ($err['message'] ?? 'Raison inconnue');
+                            }
                         }
+                    } elseif ($error !== UPLOAD_ERR_NO_FILE) {
+                        $fileName = $_FILES['new_images']['name'][$k];
+                        $msg = "Erreur upload ($fileName): ";
+                        switch ($error) {
+                            case UPLOAD_ERR_INI_SIZE: $msg .= "Fichier trop lourd (server limit)."; break;
+                            case UPLOAD_ERR_FORM_SIZE: $msg .= "Fichier trop lourd (form limit)."; break;
+                            case UPLOAD_ERR_PARTIAL: $msg .= "Upload partiel."; break;
+                            case UPLOAD_ERR_NO_TMP_DIR: $msg .= "Dossier temporaire manquant."; break;
+                            case UPLOAD_ERR_CANT_WRITE: $msg .= "Échec écriture disque."; break;
+                            default: $msg .= "Code erreur $error.";
+                        }
+                        $_SESSION['mesgs']['errors'][] = $msg;
                     }
                 }
             }

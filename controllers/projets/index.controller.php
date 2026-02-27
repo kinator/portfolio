@@ -4,18 +4,16 @@ $pdo = require $root . '/lib/pdo.php';
 $projects = [];
 
 try {
-    $query = "SELECT * FROM projects_view WHERE visible = True ORDER BY id_proj DESC";
+    $query = "SELECT id_proj, nom_proj, desc_proj, lien_proj, images, competences FROM projects_view WHERE visible = True ORDER BY id_proj DESC";
     $stmt = $pdo->query($query);
     $dbProjects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($dbProjects as $project) {
-        // Fetch the first image for the project
-        $stmtImg = $pdo->prepare("SELECT img_url FROM projets_images WHERE id_proj = ? LIMIT 1");
-        $stmtImg->execute([$project['id_proj']]);
-        $imgUrl = $stmtImg->fetchColumn();
+        $images = $project['images'] ? explode(',', trim($project['images'], "{}")) : [];
+        $baseImgUrl = $images[0] ?? null;
 
         $tags = [];
-        $skills = trim($project['competences'] ?? '', '{}');
+        $skills = $project['competences'] ? trim($project['competences'], '{}') : '';
         if ($skills) {
             $skillsArray = explode(',', $skills);
             foreach ($skillsArray as $skill) {
@@ -24,9 +22,11 @@ try {
         }
 
         $projects[] = [
+            'id' => $project['id_proj'],
             'title' => $project['nom_proj'],
             'description' => $project['desc_proj'],
-            'image' => $imgUrl ? $base_url . '/' . $imgUrl : 'https://via.placeholder.com/400x300?text=' . urlencode($project['nom_proj']),
+            'image' => $baseImgUrl ? $base_url . '/' . trim($baseImgUrl, '"') : "synave",
+            'images' => array_map(function($img) use ($base_url) { return $base_url . '/' . trim($img, '"'); }, array_filter($images)),
             'link' => $project['lien_proj'],
             'tags' => $tags
         ];
