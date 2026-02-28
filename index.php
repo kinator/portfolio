@@ -2,6 +2,7 @@
 session_start();
 require_once dirname(__FILE__) . '/lib/project.lib.php';
 include_once dirname(__FILE__) . '/vendor/autoload.php';
+require_once dirname(__FILE__) . '/lib/env.php';
 
 $root = dirname(__FILE__);
 $base_url = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
