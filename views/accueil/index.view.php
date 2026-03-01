@@ -2,7 +2,7 @@
 include "$root/inc/head.php";
 ?>
 
-<header class="w3-container w3-center" style="padding:128px 16px; background: linear-gradient(to right, #2c3e50, #4ca1af);">
+<header class="w3-container w3-center" style="padding:96px 16px; background: linear-gradient(to right, #2c3e50, #4ca1af);">
     <h1 class="w3-jumbo w3-text-white" style="text-shadow:1px 1px 0 #444"><b>Bienvenue sur mon Portfolio</b></h1>
     <p class="w3-xlarge w3-text-white">Développeur Web & Créateur de Solutions</p>
     <a href="<?= $base_url ?>/projets" class="w3-button w3-white w3-padding-large w3-large w3-margin-top w3-hover-opacity">Voir mes projets</a>
@@ -54,6 +54,25 @@ include "$root/inc/head.php";
     </div>
 </div>
 
+<!-- University Section -->
+<div class="w3-container w3-padding-64 w3-light-grey w3-center">
+  <div class="w3-content">
+    <h2 class="w3-text-dark-grey">MON PARCOURS</h2>
+    <p class="w3-text-grey"><em>Formation & Diplômes</em></p>
+    
+    <div class="w3-row w3-padding-32">
+      <div class="w3-col m6 w3-padding-large w3-hide-small">
+         <i class="fa fa-graduation-cap fa-5x w3-text-blue-grey"></i>
+      </div>
+      <div class="w3-col m6 w3-padding-large w3-text-dark-grey" style="text-align:left;">
+        <h3 class="w3-center">Université de Technologie</h3>
+        <p class="w3-large w3-center">Master en Informatique</p>
+        <p>Spécialisation en développement logiciel et architectures web. Durant ces années, j'ai acquis des bases solides en algorithmique, bases de données et gestion de projet agile.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="w3-container w3-center w3-padding-64 w3-blue-grey">
     <h2 class="w3-center">TAGS</h2>
     <p class="w3-center"><em>Mots clés</em></p><br>
@@ -66,6 +85,34 @@ include "$root/inc/head.php";
             </div>
         </div>
     <?php endforeach; ?>
+    </div>
+</div>
+
+<!-- Hobbies Section -->
+<div class="w3-container w3-padding-64 w3-white w3-center">
+    <h2 class="w3-text-dark-grey">MES PASSIONS</h2>
+    <p class="w3-text-grey"><em>Ce qui m'anime en dehors du code</em></p>
+    <div class="w3-row-padding w3-padding-32">
+        <div class="w3-quarter w3-section">
+            <i class="fa fa-gamepad fa-3x w3-text-red w3-margin-bottom"></i>
+            <p class="w3-large w3-text-dark-grey">Gaming</p>
+            <p class="w3-text-grey">Stratégie et réflexion.</p>
+        </div>
+        <div class="w3-quarter w3-section">
+            <i class="fa fa-camera fa-3x w3-text-blue w3-margin-bottom"></i>
+            <p class="w3-large w3-text-dark-grey">Photographie</p>
+            <p class="w3-text-grey">Capturer l'instant.</p>
+        </div>
+        <div class="w3-quarter w3-section">
+            <i class="fa fa-plane fa-3x w3-text-yellow w3-margin-bottom"></i>
+            <p class="w3-large w3-text-dark-grey">Voyage</p>
+            <p class="w3-text-grey">Découverte de nouvelles cultures.</p>
+        </div>
+        <div class="w3-quarter w3-section">
+            <i class="fa fa-music fa-3x w3-text-purple w3-margin-bottom"></i>
+            <p class="w3-large w3-text-dark-grey">Musique</p>
+            <p class="w3-text-grey">Inspiration quotidienne.</p>
+        </div>
     </div>
 </div>
 
