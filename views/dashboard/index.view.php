@@ -2,33 +2,35 @@
 include $root . '/inc/head.php';
 ?>
 
-<div class="w3-container w3-padding-32">
+<div class="dashboard-container">
     <!-- Import GitHub Section -->
-    <div class="w3-card w3-white w3-margin-bottom w3-round">
-        <header class="w3-container w3-light-grey">
+    <div class="dashboard-card">
+        <header class="dashboard-header">
             <h3>Importer depuis GitHub</h3>
         </header>
-        <div class="w3-container w3-padding">
-            <form action="dashboard" method="post" class="w3-container">
+        <div class="dashboard-body">
+            <form action="dashboard" method="post">
                 <input type="hidden" name="action" value="import_github">
-                <label>Nom d'utilisateur GitHub</label>
-                <input class="w3-input w3-border w3-round" type="text" name="github_username" placeholder="Nom d'utilisateur GitHub" required>
-                <button type="submit" class="w3-button w3-black w3-margin-top w3-round">Importer</button>
+                <div class="form-group">
+                    <label class="form-label">Nom d'utilisateur GitHub</label>
+                    <input class="form-input" type="text" name="github_username" placeholder="Nom d'utilisateur GitHub" required>
+                </div>
+                <button type="submit" class="btn-primary">Importer</button>
             </form>
         </div>
     </div>
 
     <!-- Projects List Section -->
-    <div class="w3-card w3-white w3-round">
-        <div class="w3-container w3-light-grey w3-padding">
-            <h2 class="w3-left" style="margin:0">Gestion des Projets</h2>
-            <button onclick="openModal()" class="w3-button w3-blue w3-right w3-round">+ Nouveau Projet</button>
+    <div class="dashboard-card">
+        <div class="dashboard-header">
+            <h2>Gestion des Projets</h2>
+            <button onclick="openModal()" class="btn-primary">+ Nouveau Projet</button>
         </div>
         
-        <div class="w3-responsive">
-            <table class="w3-table-all w3-hoverable">
+        <div style="overflow-x:auto;">
+            <table class="dashboard-table">
                 <thead>
-                    <tr class="w3-light-grey">
+                    <tr>
                         <th>Nom du Projet</th>
                         <th>Description</th>
                         <th>Compétences</th>
@@ -49,20 +51,20 @@ include $root . '/inc/head.php';
                                         $skillsArray = explode(',', $skills);
                                         foreach ($skillsArray as $skill) {
                                             $skill = trim($skill, '"');
-                                            echo '<span class="w3-tag w3-info w3-round w3-small" style="margin-right:5px;">' . htmlspecialchars($skill) . '</span>';
+                                            echo '<span class="project-tag" style="font-size:0.7rem; padding:2px 8px; margin-right:4px;">' . htmlspecialchars($skill) . '</span>';
                                         }
                                     }
                                     ?>
                                 </td>
                                 <td>
-                                    <button onclick="openModal(<?= $project['id_proj'] ?>)" class="w3-button w3-tiny w3-amber w3-round">Éditer</button>
-                                    <a href="dashboard?action=delete_project&id=<?= $project['id_proj'] ?>" class="w3-button w3-tiny w3-red w3-round" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')">Supprimer</a>
+                                    <button onclick="openModal(<?= $project['id_proj'] ?>)" class="action-btn btn-edit">Éditer</button>
+                                    <a href="dashboard?action=delete_project&id=<?= $project['id_proj'] ?>" class="action-btn btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')">Supprimer</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="w3-center">Aucun projet trouvé.</td>
+                            <td colspan="4" style="text-align:center; padding:20px;">Aucun projet trouvé.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -72,44 +74,57 @@ include $root . '/inc/head.php';
 </div>
 
 <!-- Edit/Add Project Modal -->
-<div id="editModal" class="w3-modal">
-    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-round" style="max-width:600px">
-        <header class="w3-container w3-blue-grey w3-round-top"> 
-            <span onclick="document.getElementById('editModal').style.display='none'" class="w3-button w3-display-topright w3-round">&times;</span>
-            <h3 id="modal_title">Éditer le projet</h3>
+<div id="editModal" class="custom-modal">
+    <div class="custom-modal-content" style="max-width:600px">
+        <header class="modal-header"> 
+            <h2 id="modal_title" style="margin:0; font-size:1.5rem;">Éditer le projet</h2>
+            <button onclick="document.getElementById('editModal').style.display='none'" class="modal-close">&times;</button>
         </header>
-        <form id="edit_form" method="post" enctype="multipart/form-data" class="w3-container w3-padding">
+        <div class="modal-body">
+        <form id="edit_form" method="post" enctype="multipart/form-data">
             <input type="hidden" name="action" value="update_project">
             <input type="hidden" name="id_proj" id="edit_id_proj">
             
-            <label>Nom du Projet</label>
-            <input class="w3-input w3-border w3-round" type="text" name="nom_proj" id="edit_nom_proj" required>
-            
-            <label>Description</label>
-            <textarea class="w3-input w3-border w3-round" name="desc_proj" id="edit_desc_proj" rows="3" style="resize:vertical"></textarea>
-
-            <label>Commentaire</label>
-            <textarea class="w3-input w3-border w3-round" name="commentaire_proj" id="edit_commentaire_proj" rows="3" style="resize:vertical"></textarea>
-            
-            <label>Lien</label>
-            <input class="w3-input w3-border w3-round" type="text" name="lien_proj" id="edit_lien_proj">
-            
-            <p>
-                <input class="w3-check" type="checkbox" name="visibilite_proj" id="edit_visibilite_proj" value="1">
-                <label>Visible</label>
-            </p>
-
-            <div id="current_images_container">
-                <label>Images actuelles</label>
-                <div id="current_images" class="w3-row-padding w3-margin-bottom w3-border w3-round w3-padding"></div>
+            <div class="form-group">
+                <label class="form-label">Nom du Projet</label>
+                <input class="form-input" type="text" name="nom_proj" id="edit_nom_proj" required>
             </div>
             
-            <label>Ajouter des images</label>
-            <input class="w3-input w3-border w3-round" type="file" name="new_images[]" multiple accept="image/*">
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-input" name="desc_proj" id="edit_desc_proj" rows="3" style="resize:vertical"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Commentaire</label>
+                <textarea class="form-input" name="commentaire_proj" id="edit_commentaire_proj" rows="3" style="resize:vertical"></textarea>
+            </div>
             
-            <button type="submit" id="modal_submit_button" class="w3-button w3-green w3-margin-top w3-round w3-right">Sauvegarder</button>
+            <div class="form-group">
+                <label class="form-label">Lien</label>
+                <input class="form-input" type="text" name="lien_proj" id="edit_lien_proj">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" style="display:inline-block; margin-right:10px;">Visible</label>
+                <input type="checkbox" name="visibilite_proj" id="edit_visibilite_proj" value="1" style="transform: scale(1.5);">
+            </div>
+
+            <div id="current_images_container" class="form-group">
+                <label class="form-label">Images actuelles</label>
+                <div id="current_images" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap:10px; padding:10px; border:1px solid #eee; border-radius:8px;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Ajouter des images</label>
+                <input class="form-input" type="file" name="new_images[]" multiple accept="image/*">
+            </div>
+            
+            <div style="text-align:right; margin-top:20px;">
+                <button type="submit" id="modal_submit_button" class="btn-primary">Sauvegarder</button>
+            </div>
         </form>
-        <div class="w3-container w3-padding-16"></div>
+        </div>
     </div>
 </div>
 
@@ -153,7 +168,7 @@ function openModal(id = null) {
             let html = '';
             if(data.images && data.images.length) {
                 data.images.forEach(img => {
-                    html += '<div class="w3-col s4 w3-center w3-margin-bottom"><img src="<?= $base_url ?>/'+img.url_img+'" style="width:100%;height:80px;object-fit:cover" class="w3-round"><br><label><input type="checkbox" name="delete_images[]" value="'+img.id_img+'"> Supprimer</label></div>';
+                    html += '<div style="text-align:center;"><img src="<?= $base_url ?>/'+img.url_img+'" style="width:100%;height:80px;object-fit:cover;border-radius:4px;"><br><label style="font-size:0.8rem;"><input type="checkbox" name="delete_images[]" value="'+img.id_img+'"> Supprimer</label></div>';
                 });
             } else { html = '<p>Aucune image.</p>'; }
             currentImagesDiv.innerHTML = html;

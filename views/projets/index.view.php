@@ -2,63 +2,66 @@
 include "$root/inc/head.php";
 ?>
 
-<header class="w3-container w3-center" style="padding:128px 16px; background: linear-gradient(to right, #2c3e50, #4ca1af);">
-  <h1 class="w3-jumbo w3-text-white" style="text-shadow:1px 1px 0 #444"><b>Mes Projets</b></h1>
+<header class="projects-header">
+  <h1 class="w3-jumbo"><b>Mes Projets</b></h1>
   <p class="w3-xlarge w3-text-white">Découvrez mes réalisations</p>
 </header>
 
-<div class="w3-container w3-padding-64 w3-white">
+<div class="w3-container w3-padding-64 w3-dark-grey w3-text-white">
   <div class="w3-content">
-    <h2 class="w3-center">GALERIE DE PROJETS</h2>
+    <h2 class="w3-center light">GALERIE DE PROJETS</h2>
     <p class="w3-center"><em>Un aperçu de mon travail</em></p>
     
-    <div class="w3-row-padding w3-padding-32" style="margin:0 -16px">
+    <div class="projects-grid">
       <?php foreach ($projects as $project): ?>
-        <div class="w3-third w3-margin-bottom">
-          <div class="w3-card-4 w3-round" style="height: 100%; display: flex; flex-direction: column;">
-            <img src="<?= $project['image'] ?>" alt="<?= $project['title'] ?>" style="width:100%" class="w3-hover-opacity w3-round-top">
-            <div class="w3-container w3-white" style="flex-grow: 1;">
-              <h3><b><?= $project['title'] ?></b></h3>
-              <p><?= $project['description'] ?></p>
-              <div class="w3-margin-bottom">
-                <?php foreach ($project['tags'] as $tag): ?>
-                  <span class="w3-tag w3-light-grey w3-small w3-margin-bottom w3-round"><?= $tag ?></span>
-                <?php endforeach; ?>
-              </div>
-            </div>
-            <div class="w3-container w3-white w3-padding">
-              <button onclick="document.getElementById('modal-<?= $project['id'] ?>').style.display='block'" class="w3-button w3-black w3-block w3-round"><i class="fa fa-eye"></i> Voir</button>
+        <div class="project-card">
+          <div style="overflow: hidden;">
+            <img src="<?= $project['image'] ?>" alt="<?= $project['title'] ?>" class="project-card-image">
+          </div>
+          <div class="project-card-content">
+            <h3 class="project-card-title"><?= $project['title'] ?></h3>
+            <p class="project-card-desc"><?= $project['description'] ?></p>
+            <div class="project-tags">
+              <?php foreach ($project['tags'] as $tag): ?>
+                <span class="project-tag"><?= $tag ?></span>
+              <?php endforeach; ?>
             </div>
           </div>
+          <div class="project-card-footer">
+            <button onclick="document.getElementById('modal-<?= $project['id'] ?>').style.display='block'" class="btn-project"><i class="fa fa-eye"></i> Voir le projet</button>
+          </div>
+        </div>
 
-          <!-- Modal -->
-          <div id="modal-<?= $project['id'] ?>" class="w3-modal">
-            <div class="w3-modal-content w3-animate-zoom w3-card-4 w3-round">
-              <header class="w3-container w3-blue-grey w3-round-top"> 
-                <span onclick="document.getElementById('modal-<?= $project['id'] ?>').style.display='none'" class="w3-button w3-display-topright w3-round">&times;</span>
-                <h2><?= $project['title'] ?></h2>
-              </header>
-              <div class="w3-container w3-padding">
-                <p><?= $project['description'] ?></p>
-                <div class="w3-row-padding" style="margin:0 -16px">
-                  <?php foreach ($project['images'] as $img): ?>
-                    <div class="w3-half w3-margin-bottom">
-                      <img src="<?= $img ?>" style="width:100%; cursor:pointer" class="w3-round" onclick="window.open(this.src, '_blank')" alt="<?= $project['title'] ?>">
-                    </div>
-                  <?php endforeach; ?>
-                </div>
-                <div class="w3-margin-bottom">
-                  <?php foreach ($project['tags'] as $tag): ?>
-                    <span class="w3-tag w3-light-grey w3-small w3-margin-right w3-round"><?= $tag ?></span>
-                  <?php endforeach; ?>
-                </div>
-                <?php if ($project['link']): ?>
-                  <a href="<?= $project['link'] ?>" target="_blank" class="w3-button w3-black w3-block w3-round"><i class="fa fa-external-link"></i> Visiter le site</a>
-                <?php endif; ?>
+        <!-- Modal -->
+        <div id="modal-<?= $project['id'] ?>" class="custom-modal">
+          <div class="custom-modal-content">
+            <header class="modal-header"> 
+              <h2 style="margin:0; font-size:1.5rem;"><?= $project['title'] ?></h2>
+              <button onclick="document.getElementById('modal-<?= $project['id'] ?>').style.display='none'" class="modal-close">&times;</button>
+            </header>
+            <div class="modal-body">
+              <p style="font-size: 1.1rem; line-height: 1.6;"><?= $project['description'] ?></p>
+              
+              <div class="modal-gallery">
+                <?php foreach ($project['images'] as $img): ?>
+                    <img src="<?= $img ?>" onclick="openLightbox(this.src)" alt="<?= $project['title'] ?>">
+                <?php endforeach; ?>
               </div>
-              <footer class="w3-container w3-blue-grey w3-padding w3-round-bottom">
-                <button class="w3-button w3-right w3-white w3-border w3-round" onclick="document.getElementById('modal-<?= $project['id'] ?>').style.display='none'">Fermer</button>
-              </footer>
+
+              <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                <h4 style="margin-bottom: 15px; font-size: 1rem; color: #666;">Technologies utilisées :</h4>
+                <div class="project-tags">
+                <?php foreach ($project['tags'] as $tag): ?>
+                  <span class="project-tag"><?= $tag ?></span>
+                <?php endforeach; ?>
+                </div>
+              </div>
+
+              <?php if ($project['link']): ?>
+                <div style="margin-top: 30px;">
+                  <a href="<?= $project['link'] ?>" target="_blank" class="btn-project" style="display:inline-block; text-align:center; text-decoration:none;"><i class="fa fa-external-link"></i> Visiter le site</a>
+                </div>
+              <?php endif; ?>
             </div>
           </div>
         </div>
@@ -66,6 +69,21 @@ include "$root/inc/head.php";
     </div>
   </div>
 </div>
+
+<!-- Lightbox Modal -->
+<div id="lightbox-modal" class="custom-modal" style="z-index: 1100;" onclick="this.style.display='none'">
+    <span class="modal-close" style="position:fixed; top:20px; right:30px; z-index:1101;">&times;</span>
+    <div style="display:flex; justify-content:center; align-items:center; height:100%; padding:20px;">
+        <img id="lightbox-image" src="" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; box-shadow: 0 5px 25px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
+    </div>
+</div>
+
+<script>
+function openLightbox(src) {
+    document.getElementById('lightbox-image').src = src;
+    document.getElementById('lightbox-modal').style.display = 'block';
+}
+</script>
 
 <?php
 include "$root/inc/footer.php";
