@@ -17,6 +17,7 @@ $routes = [
     'contact'  => ['controller' => "$root/controllers/contact/index.controller.php", 'auth' => false],
     'bd'       => ['controller' => "$root/controllers/database/index.controller.php", 'auth' => true],
     'dashboard'=> ['controller' => "$root/controllers/dashboard/index.controller.php", 'auth' => true],
+    'mentions' => ['controller' => "$root/views/mentions.php", 'auth' => false],
     null       => ['controller' => "$root/controllers/accueil/index.controller.php", 'auth' => false]
 ];
 

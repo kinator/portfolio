@@ -39,7 +39,7 @@ try {
   }
   $result = null;
 
-  echo $table_values;
+  echo json_encode(['success' => $table_values]);
 } catch (Throwable $e) {
   die(json_encode(['error' => 'Erreur: ' . $e->getMessage() . ' ligne -> ' . $e->getLine() . ' File - ' . $e->getFile()]));
 }

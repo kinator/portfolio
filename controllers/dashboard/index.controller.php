@@ -218,7 +218,7 @@ function handleEditRequest($pdo, $root) {
 
                 // Handle new image uploads
                 if (isset($_FILES['new_images'])) {
-                    $targetDir = $root . '/img/projects/';
+                    $targetDir = $root . '/assets/img/projects/';
                     if (!is_dir($targetDir)) {
                         if (!mkdir($targetDir, 0777, true)) {
                             throw new Exception("Impossible de créer le dossier d'images.");
@@ -235,7 +235,7 @@ function handleEditRequest($pdo, $root) {
                                 $name = preg_replace('/[^a-zA-Z0-9_-]/', '_', $info['filename']);
                                 $fname = uniqid('proj_') . '_' . $name . '.' . $ext;
                                 if (move_uploaded_file($tmp, $targetDir . $fname)) {
-                                    $insStmt->execute([$projectId, 'img/projects/' . $fname]);
+                                    $insStmt->execute([$projectId, 'assets/img/projects/' . $fname]);
                                 } else {
                                     $err = error_get_last();
                                     $_SESSION['mesgs']['errors'][] = "Erreur lors de l'enregistrement de l'image " . $_FILES['new_images']['name'][$k] . " : " . ($err['message'] ?? 'Raison inconnue');

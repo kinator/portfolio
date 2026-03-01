@@ -27,7 +27,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--title-color-dark);
 }
 
-h2.light {
+h1.light, h2.light, h3.light, h4.light, h5.light, h6.light {
   color: var(--title-color-light);
 }
 
@@ -564,4 +564,28 @@ h2.light {
 .btn-primary:hover {
     background: #007bb5;
     box-shadow: 0 4px 10px rgba(0,147,210,0.3);
+}
+
+/* Mentions Page */
+.mentions-header {
+  padding: 120px 16px;
+  background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+  text-align: center;
+  color: var(--white);
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.mentions-header h1 {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.mentions-content h2 {
+    margin-top: 40px;
+    color: var(--title-color-dark);
+    font-weight: 700;
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+    padding-bottom: 5px;
 }

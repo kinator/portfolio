@@ -59,7 +59,7 @@ include "$root/inc/head.php";
         <?php endif; ?>
 
         <div class="w3-center w3-padding-32">
-            <a href="<?= $base_url ?>/doc/CV_Behani_Julien_dev_sys_db.pdf" class="btn-primary" download><i class="fa fa-download"></i> Télécharger mon CV</a>
+            <a href="<?= $base_url ?>/assets/doc/CV_Behani_Julien_dev_sys_db.pdf" class="btn-primary" download><i class="fa fa-download"></i> Télécharger mon CV</a>
         </div>
     </div>
 </div>
