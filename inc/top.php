@@ -20,7 +20,7 @@ if (isset($_SESSION['user']) && file_exists(dirname(__FILE__, 2) . '/class/authC
       <?php } ?>
       <?php if (isset($_SESSION['user'])) : ?>
         <div class="w3-dropdown-hover w3-right">
-          <button class="w3-button"><i class="fa fa-user w3-margin-right"></i><?= $_SESSION['user']['nom_ens'] == 'admin_nom' ? 'ADMIN' : strtoupper(sanitize($_SESSION['user']['prenom_ens'])) ?> <i class="fa fa-caret-down"></i></button>
+          <button class="w3-button"><i class="fa fa-user w3-margin-right"></i><?=strtoupper(sanitize($_SESSION['user']['nom_util'])) ?> <i class="fa fa-caret-down"></i></button>
           <div class="w3-dropdown-content w3-bar-block w3-card-4">
             <a href="<?= $base_url ?>/disconnect.php" class="w3-bar-item w3-button">Déconnexion</a>
           </div>
