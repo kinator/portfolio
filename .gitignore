@@ -3,5 +3,5 @@ TODO
 .env
 .htaccess
 .vscode
-img/projects
+assets/img/projects/*
 dump-portfolio-202603042229.sql
