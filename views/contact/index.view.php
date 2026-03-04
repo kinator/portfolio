@@ -3,7 +3,7 @@ include "$root/inc/head.php";
 ?>
 
 <header class="contact-header">
-    <h1 class="w3-jumbo"><b>Contactez-moi</b></h1>
+    <h1 class="w3-jumbo w3-text-white"><b>Contactez-moi</b></h1>
     <p class="w3-xlarge w3-text-white">Discutons de votre projet</p>
 </header>
 

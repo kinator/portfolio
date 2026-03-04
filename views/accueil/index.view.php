@@ -2,8 +2,8 @@
 include "$root/inc/head.php";
 ?>
 
-<header class="w3-container w3-center" style="padding:96px 16px; background: linear-gradient(to right, #2c3e50, #4ca1af);">
-  <h1 class="w3-jumbo w3-text-white" style="text-shadow:1px 1px 0 #444"><b>Bienvenue sur mon Portfolio</b></h1>
+<header class="w3-container w3-center home-header">
+  <h1 class="w3-jumbo w3-text-white"><b>Bienvenue sur mon Portfolio</b></h1>
   <p class="w3-xlarge w3-text-white">Développeur Web & Créateur de Solutions</p>
   <a href="<?= $base_url ?>/projets" class="w3-button w3-white w3-padding-large w3-large w3-margin-top w3-hover-opacity">Voir mes projets</a>
 </header>
@@ -34,36 +34,36 @@ include "$root/inc/head.php";
   <p class="w3-center"><em>Ce que je fais</em></p><br>
   <div class="w3-quarter w3-section">
     <i class="fab fa-php fa-3x w3-margin-bottom w3-text-indigo"></i>
-    <p class="w3-large"><b>PHP & SQL</b></p>
+    <p class="w3-large"><b>PHP, NODE & SQL/NoSQL</b></p>
     <p>Développement back-end robuste et performant.</p>
   </div>
   <div class="w3-quarter w3-section">
     <i class="fa fa-code fa-3x w3-margin-bottom w3-text-orange"></i>
-    <p class="w3-large"><b>HTML, CSS & JS</b></p>
-    <p>Création d'interfaces front-end réactives et modernes.</p>
+    <p class="w3-large"><b>Java, Python, C, C++</b></p>
+    <p>Développement logiciel et algorithmique sur plusieurs plateformes.</p>
   </div>
   <div class="w3-quarter w3-section">
     <i class="fab fa-git-alt fa-3x w3-margin-bottom w3-text-white"></i>
-    <p class="w3-large"><b>Git & DevOps</b></p>
+    <p class="w3-large"><b>Git/Gitlab & Trello</b></p>
     <p>Workflow de développement et déploiement continu.</p>
   </div>
   <div class="w3-quarter w3-section">
     <i class="fa fa-server fa-3x w3-margin-bottom w3-text-teal"></i>
     <p class="w3-large"><b>Système & Réseau</b></p>
-    <p>Administration et optimisation d'infrastructures.</p>
+    <p>Administration et optimisation d'infrastructures (Linux, Windows, Docker, Kubernetes).</p>
   </div>
 </div>
 
 <div class="w3-container w3-center w3-padding-64 w3-blue-grey">
   <h2 class="w3-center">TAGS</h2>
   <p class="w3-center"><em>Mots clés</em></p><br>
-  <div class="w3-row-padding w3-center" style="display:flex; flex-wrap:wrap; justify-content:center;">
+  <div class="tags-container">
   <?php foreach ($tags as $tag) : ?>
-    <div class="w3-quarter w3-section">
-      <div class="w3-card w3-round-large w3-dark-grey w3-text-white w3-padding w3-hover-shadow" style="height:100%">
-        <p class="w3-large w3-text-light-blue"><b><i class="fa fa-hashtag"></i> <?= sanitize($tag['id_comp']) ?></b></p>
-        <p class="w3-small"><?= sanitize($tag['description']) ?></p>
+    <div class="tag-item">
+      <div class="tag-header">
+        <i class="fa fa-hashtag"></i> <?= sanitize($tag['id_comp']) ?>
       </div>
+      <div class="tag-body"><?= sanitize($tag['description']) ?></div>
     </div>
   <?php endforeach; ?>
   </div>
@@ -76,11 +76,11 @@ include "$root/inc/head.php";
     <h2 class="w3-center light">MON PARCOURS</h2>
     <p class="w3-text-light-grey"><em>Formation & Diplômes</em></p>
     
-    <div class="w3-row w3-padding-32" style="display:flex; align-items:center; flex-wrap:wrap">
+    <div class="w3-row w3-padding-32 university-row">
       <div class="w3-col m6 w3-padding-large w3-hide-small">
-        <a href="https://www.iut-littoral.fr/" target="_blank"><img src="<?= $base_url ?>/assets/img/logo_iut.png" alt="Logo IUT" style="width:75%"></a>
+        <a href="https://www.iut-littoral.fr/" target="_blank"><img src="<?= $base_url ?>/assets/img/logo_iut.png" alt="Logo IUT" class="university-logo"></a>
       </div>
-      <div class="w3-col m6 w3-padding-large" style="text-align:left;">
+      <div class="w3-col m6 w3-padding-large university-text">
         <h3 class="w3-center light">Institut Universitaire de Technologie</h3>
         <p class="w3-large w3-center">BUT Informatique (bac +3)</p>
         <p>Spécialisation en développement logiciel et architectures web. Durant ces années, j'ai acquis des bases solides en algorithmique, bases de données et gestion de projet agile.</p>
@@ -88,11 +88,11 @@ include "$root/inc/head.php";
       </div>
     </div>
 
-    <div class="w3-row w3-padding-32" style="display:flex; align-items:center; flex-wrap:wrap">
+    <div class="w3-row w3-padding-32 university-row">
       <div class="w3-col m6 w3-padding-large w3-hide-small">
-        <div class="w3-center"><img src="<?= $base_url ?>/assets/img/TOEIC_logo.png" alt="Logo IUT" style="width:75%"></div>
+        <div class="w3-center"><img src="<?= $base_url ?>/assets/img/TOEIC_logo.png" alt="Logo IUT" class="university-logo"></div>
       </div>
-      <div class="w3-col m6 w3-padding-large" style="text-align:left;">
+      <div class="w3-col m6 w3-padding-large university-text">
         <h3 class="w3-center light">Certification TOEIC</h3>
         <p class="w3-large w3-center">Score : 990/990</p>
         <p>Obtention du score maximal au test TOEIC Listening & Reading. Cette performance valide un haut niveau et atteste de ma capacité à travailler couramment en anglais dans un contexte professionnel international.</p>
@@ -109,22 +109,22 @@ include "$root/inc/head.php";
     <div class="w3-quarter w3-section">
       <i class="fa fa-gamepad fa-3x w3-text-red w3-margin-bottom"></i>
       <p class="w3-large">Gaming</p>
-      <p>Stratégie et réflexion.</p>
+      <p>Stratégie, réflexion et action.</p>
     </div>
     <div class="w3-quarter w3-section">
-      <i class="fa fa-camera fa-3x w3-text-blue w3-margin-bottom"></i>
-      <p class="w3-large">Photographie</p>
-      <p>Capturer l'instant.</p>
+      <i class="fa fa-terminal fa-3x w3-text-blue w3-margin-bottom"></i>
+      <p class="w3-large">Développement personnel</p>
+      <p>Faire des outils qui servent facilement.</p>
     </div>
     <div class="w3-quarter w3-section">
-      <i class="fa fa-plane fa-3x w3-text-yellow w3-margin-bottom"></i>
-      <p class="w3-large">Voyage</p>
-      <p>Découverte de nouvelles cultures.</p>
+      <i class="fa fa-utensils fa-3x w3-text-yellow w3-margin-bottom"></i>
+      <p class="w3-large">Cuisine</p>
+      <p>Faire de bons plats et gâteaux.</p>
     </div>
     <div class="w3-quarter w3-section">
       <i class="fa fa-music fa-3x w3-text-purple w3-margin-bottom"></i>
       <p class="w3-large">Musique</p>
-      <p>Inspiration quotidienne.</p>
+      <p>Mélomane à sensibilité musicale variée.</p>
     </div>
   </div>
 </div>

@@ -1,9 +1,23 @@
 <?php
 include "$root/inc/head.php";
+
+// Collect all unique tags for filter
+$allTags = [];
+if (!empty($projects)) {
+    foreach ($projects as $project) {
+        if (!empty($project['tags'])) {
+            foreach ($project['tags'] as $tag) {
+                $allTags[] = $tag;
+            }
+        }
+    }
+    $allTags = array_unique($allTags);
+    sort($allTags);
+}
 ?>
 
 <header class="projects-header">
-  <h1 class="w3-jumbo"><b>Mes Projets</b></h1>
+  <h1 class="w3-jumbo w3-text-white"><b>Mes Projets</b></h1>
   <p class="w3-xlarge w3-text-white">Découvrez mes réalisations</p>
 </header>
 
@@ -12,9 +26,16 @@ include "$root/inc/head.php";
     <h2 class="w3-center light">GALERIE DE PROJETS</h2>
     <p class="w3-center"><em>Un aperçu de mon travail</em></p>
     
+    <div class="w3-center w3-padding-32">
+      <button class="w3-button w3-black filter-btn" onclick="filterProjects(this.getAttribute('data-tag'))" data-tag="all">Tous</button>
+      <?php foreach ($allTags as $tag): ?>
+        <button class="w3-button w3-white filter-btn" onclick="filterProjects(this.getAttribute('data-tag'))" data-tag="<?= htmlspecialchars($tag) ?>"><?= htmlspecialchars($tag) ?></button>
+      <?php endforeach; ?>
+    </div>
+
     <div class="projects-grid">
       <?php foreach ($projects as $project): ?>
-        <div class="project-card">
+        <div class="project-card" data-tags="<?= htmlspecialchars(implode(',', $project['tags'])) ?>">
           <div style="overflow: hidden;">
             <img src="<?= $project['image'] ?>" alt="<?= $project['title'] ?>" class="project-card-image">
           </div>
@@ -79,6 +100,32 @@ include "$root/inc/head.php";
 </div>
 
 <script>
+function filterProjects(tag) {
+    var cards = document.getElementsByClassName('project-card');
+    var btns = document.getElementsByClassName('filter-btn');
+    
+    for (var i = 0; i < btns.length; i++) {
+        var btn = btns[i];
+        if (btn.getAttribute('data-tag') === tag) {
+            btn.classList.remove('w3-white');
+            btn.classList.add('w3-black');
+        } else {
+            btn.classList.remove('w3-black');
+            btn.classList.add('w3-white');
+        }
+    }
+
+    for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var cardTags = card.getAttribute('data-tags').split(',');
+        if (tag === 'all' || cardTags.indexOf(tag) > -1) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    }
+}
+
 function openLightbox(src) {
     document.getElementById('lightbox-image').src = src;
     document.getElementById('lightbox-modal').style.display = 'block';
