@@ -37,7 +37,7 @@ if ($db) {
 <footer class="w3-container w3-padding-32 w3-center w3-black w3-xlarge">
   <a href="https://github.com/JrCanDev/GDI" target="_blank"><i class="fab fa-github w3-hover-opacity" aria-hidden="true"></i></a>
   <p class="w3-medium">Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
-  <p class="w3-medium">Hébergé par <a href="https://github.com/JrCanDev" target="_blank">JrCanDev</a></p>
+  <p class="w3-medium">Hébergé par <strong>Kinator</strong></p>
   <p class="w3-medium"><a href="<?= $base_url ?>/mentions">Mentions légales</a></p>
 </footer>
 
