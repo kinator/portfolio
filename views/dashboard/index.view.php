@@ -20,6 +20,28 @@ include $root . '/inc/head.php';
         </div>
     </div>
 
+    <!-- Competences Management Section -->
+    <div class="dashboard-card">
+        <header class="dashboard-header">
+            <h3>Gestion des Compétences</h3>
+        </header>
+        <div class="dashboard-body">
+            <form action="dashboard" method="post" style="display:flex; gap:10px; margin-bottom:15px;">
+                <input type="hidden" name="action" value="add_competence">
+                <input class="form-input" type="text" name="name" placeholder="Nouvelle compétence" required style="flex:1;">
+                <button type="submit" class="btn-primary">Ajouter</button>
+            </form>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <?php foreach ($all_competences as $comp): ?>
+                    <span class="project-tag" style="padding:5px 10px; background:#f0f0f0; border-radius:15px; display:flex; align-items:center; gap:8px; border:1px solid #ddd;">
+                        <?= htmlspecialchars($comp['name']) ?>
+                        <a href="dashboard?action=delete_competence&id=<?= $comp['id_comp'] ?>" onclick="return confirm('Supprimer cette compétence ?')" style="color:#cc0000; text-decoration:none; font-weight:bold;">&times;</a>
+                    </span>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
     <!-- Projects List Section -->
     <div class="dashboard-card">
         <div class="dashboard-header">

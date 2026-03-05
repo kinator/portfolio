@@ -95,8 +95,27 @@ function handleEditRequest($pdo, $root) {
         exit;
     }
 
+    // Handle competence deletion request
+    if (isset($_GET['action']) && $_GET['action'] === 'delete_competence' && isset($_GET['id'])) {
+        $id = $_GET['id'];
+        try {
+            $pdo->beginTransaction();
+            $stmt = $pdo->prepare("DELETE FROM projets_competences WHERE id_comp = ?");
+            $stmt->execute([$id]);
+            $stmt = $pdo->prepare("DELETE FROM competences WHERE id_comp = ?");
+            $stmt->execute([$id]);
+            $pdo->commit();
+            $_SESSION['mesgs']['confirm'][] = "Compétence supprimée.";
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $_SESSION['mesgs']['errors'][] = "Erreur lors de la suppression : " . $e->getMessage();
+        }
+        header('Location: dashboard');
+        exit;
+    }
+
     // Handle POST form submissions
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array($_POST['action'], ['add_project', 'update_project', 'import_github'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array($_POST['action'], ['add_project', 'update_project', 'import_github', 'add_competence'])) {
         try {
             // Action: Import projects from GitHub
             if ($_POST['action'] === 'import_github') {
@@ -193,6 +212,12 @@ function handleEditRequest($pdo, $root) {
                     } else {
                         $_SESSION['mesgs']['errors'][] = "Impossible de récupérer les dépôts GitHub (Utilisateur introuvable ou erreur API).";
                     }
+                }
+            } elseif ($_POST['action'] === 'add_competence') {
+                if (!empty($_POST['name'])) {
+                    $stmt = $pdo->prepare("INSERT INTO competences (name) VALUES (?)");
+                    $stmt->execute([trim($_POST['name'])]);
+                    $_SESSION['mesgs']['confirm'][] = "Compétence ajoutée.";
                 }
             } else {
                 // Action: Add or Update a project manually
