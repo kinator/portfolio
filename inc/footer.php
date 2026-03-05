@@ -7,7 +7,7 @@ $confirms = json_encode($confirms);
 unset($_SESSION['mesgs']['errors']);
 unset($_SESSION['mesgs']['confirm']);
 
-if ($db) {
+if (isset($db)) {
     $db = NULL;
 }
 ?>
@@ -35,7 +35,11 @@ if ($db) {
 
 <!-- Footer -->
 <footer class="w3-container w3-padding-32 w3-center w3-black w3-xlarge">
-  <a href="https://github.com/JrCanDev/GDI" target="_blank"><i class="fab fa-github w3-hover-opacity" aria-hidden="true"></i></a>
+  <div class="w3-section">
+    <a href="https://github.com/kinator" target="_blank" class="w3-hover-text-grey w3-margin-right"><i class="fab fa-github fa-2x"></i></a>
+    <a href="https://www.linkedin.com/in/julien-behani-929439353/" target="_blank" class="w3-hover-text-blue w3-margin-right"><i class="fab fa-linkedin fa-2x"></i></a>
+    <a href="https://discord.com/users/712367050710056965" target="_blank" class="w3-hover-text-indigo"><i class="fab fa-discord fa-2x"></i></a>
+  </div>
   <p class="w3-medium">Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
   <p class="w3-medium">Hébergé par <strong>Kinator</strong></p>
   <p class="w3-medium"><a href="<?= $base_url ?>/mentions">Mentions légales</a></p>

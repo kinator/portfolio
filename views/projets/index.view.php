@@ -63,6 +63,10 @@ if (!empty($projects)) {
             <div class="modal-body">
               <p style="font-size: 1.1rem; line-height: 1.6;"><?= $project['description'] ?></p>
               
+              <?php if (!empty($project['commentary'])): ?>
+                <p style="font-size: 1rem; margin-top: 15px;"><?= $project['commentary'] ?></p>
+              <?php endif; ?>
+
               <div class="modal-gallery">
                 <?php foreach ($project['images'] as $img): ?>
                     <img src="<?= $img ?>" onclick="openLightbox(this.src)" alt="<?= $project['title'] ?>">
