@@ -48,6 +48,11 @@ function handleEditRequest($pdo, $root) {
                     $stmtImg->execute([$_GET['id']]);
                     $project['images'] = $stmtImg->fetchAll(PDO::FETCH_ASSOC);
                 } catch (PDOException $e) { $project['images'] = []; }
+                try {
+                    $stmtComp = $pdo->prepare("SELECT id_comp FROM projets_competences WHERE id_proj = ?");
+                    $stmtComp->execute([$_GET['id']]);
+                    $project['competences'] = $stmtComp->fetchAll(PDO::FETCH_COLUMN);
+                } catch (PDOException $e) { $project['competences'] = []; }
             }
             echo json_encode($project);
         } catch (Exception $e) { echo json_encode(['error' => $e->getMessage()]); }
@@ -216,6 +221,22 @@ function handleEditRequest($pdo, $root) {
                     $_SESSION['mesgs']['confirm'][] = "Projet mis à jour.";
                 }
 
+                // Handle competences (tags)
+                $competences = $_POST['competences'] ?? [];
+
+                if ($_POST['action'] === 'update_project') {
+                    // For update, clear existing and insert new
+                    $delCompStmt = $pdo->prepare("DELETE FROM projets_competences WHERE id_proj = ?");
+                    $delCompStmt->execute([$projectId]);
+                }
+
+                if (!empty($competences)) {
+                    $insCompStmt = $pdo->prepare("INSERT INTO projets_competences (id_proj, id_comp) VALUES (?, ?)");
+                    foreach ($competences as $compId) {
+                        $insCompStmt->execute([$projectId, $compId]);
+                    }
+                }
+
                 // Handle new image uploads
                 if (isset($_FILES['new_images'])) {
                     $targetDir = $root . '/assets/img/projects/';
@@ -270,12 +291,29 @@ if ($pdo) {
     handleEditRequest($pdo, $root);
 }
 
+$all_competences = [];
+if ($pdo) {
+    try {
+        $stmt = $pdo->query("SELECT id_comp, name FROM competences ORDER BY name");
+        $all_competences = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        $_SESSION['mesgs']['errors'][] = "Erreur de récupération des compétences : " . $e->getMessage();
+    }
+}
+
 $projects = [];
 
 // Fetch all projects for display in the dashboard list
 if ($pdo) {
     try {
-        $query = "SELECT * FROM projects_view ORDER BY id_proj DESC";
+        $sort = $_GET['sort'] ?? 'id_proj';
+        $order = $_GET['order'] ?? 'DESC';
+        
+        $allowed = ['nom_proj', 'visible', 'competences', 'id_proj'];
+        if (!in_array($sort, $allowed)) $sort = 'id_proj';
+        $order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
+
+        $query = "SELECT * FROM projects_view ORDER BY $sort $order";
         $stmt = $pdo->query($query);
         $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {

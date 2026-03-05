@@ -4,7 +4,7 @@ $pdo = require $root . '/lib/pdo.php';
 $projects = [];
 
 try {
-    $query = "SELECT id_proj, nom_proj, desc_proj, lien_proj, images, competences FROM projects_view WHERE visible = True ORDER BY id_proj DESC";
+    $query = "SELECT id_proj, nom_proj, desc_proj, commentaire_proj, lien_proj, images, competences FROM projects_view WHERE visible = True ORDER BY id_proj DESC";
     $stmt = $pdo->query($query);
     $dbProjects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -25,7 +25,8 @@ try {
             'id' => $project['id_proj'],
             'title' => $project['nom_proj'],
             'description' => $project['desc_proj'],
-            'image' => $baseImgUrl ? $base_url . '/' . trim($baseImgUrl, '"') : "synave",
+            'commentary' => $project['commentaire_proj'] ?? '',
+            'image' => $baseImgUrl ? $base_url . '/' . trim($baseImgUrl, '"') : $base_url . "/assets/img/kinator.jpg",
             'images' => array_map(function($img) use ($base_url) { return $base_url . '/' . trim($img, '"'); }, array_filter($images)),
             'link' => $project['lien_proj'],
             'tags' => $tags

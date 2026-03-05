@@ -88,6 +88,13 @@ include "$root/inc/head.php";
       </div>
     </div>
 
+    <div class="w3-row w3-padding-32 w3-center">
+      <video width="80%" controls class="w3-round">
+        <source src="<?= $base_url ?>/assets/3_minutes_but.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la lecture de vidéos.
+      </video>
+    </div>
+
     <div class="w3-row w3-padding-32 university-row">
       <div class="w3-col m6 w3-padding-large w3-hide-small">
         <div class="w3-center"><img src="<?= $base_url ?>/assets/img/TOEIC_logo.png" alt="Logo IUT" class="university-logo"></div>

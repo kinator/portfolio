@@ -12,9 +12,12 @@ if (isset($_SESSION['user']) && file_exists(dirname(__FILE__, 2) . '/class/authC
       <a href="<?= $base_url ?>/" class="w3-bar-item w3-button"><i class="fa fa-home w3-margin-right"></i>ACCUEIL</a>
       <a href="<?= $base_url ?>/projets" class="w3-bar-item w3-button"><i class="fa fa-folder-open w3-margin-right"></i>PROJETS</a>
       <a href="<?= $base_url ?>/contact" class="w3-bar-item w3-button"><i class="fa fa-envelope w3-margin-right"></i>CONTACT</a>
-      <?php if (isset($_SESSION['user']) && authClass::checkPriviledAdmin($_SESSION['user']['nom_util'])) { ?>
+
+      <!-- Cassé, donc mis de côté -->
+      <!-- <?php if (isset($_SESSION['user']) && authClass::checkPriviledAdmin($_SESSION['user']['nom_util'])) { ?>
         <a href="<?= $base_url ?>/bd" class="w3-bar-item w3-button"><i class="fa fa-database w3-margin-right"></i>BASE DE DONNÉES</a>
-      <?php } ?>
+      <?php } ?> -->
+      
       <?php if (isset($_SESSION['user']) && authClass::checkPriviledAdmin($_SESSION['user']['nom_util'])) { ?>
         <a href="<?= $base_url ?>/dashboard" class="w3-bar-item w3-button"><i class="fa fa-database w3-margin-right"></i>Dashboard</a>
       <?php } ?>

@@ -4,4 +4,6 @@ TODO
 .htaccess
 .vscode
 assets/img/projects/*
+assets/vid/*
+assets/doc/*
 dump-portfolio-202603042229.sql

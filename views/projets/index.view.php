@@ -26,11 +26,24 @@ if (!empty($projects)) {
     <h2 class="w3-center light">GALERIE DE PROJETS</h2>
     <p class="w3-center"><em>Un aperçu de mon travail</em></p>
     
-    <div class="w3-center w3-padding-32">
-      <button class="w3-button w3-black filter-btn" onclick="filterProjects(this.getAttribute('data-tag'))" data-tag="all">Tous</button>
-      <?php foreach ($allTags as $tag): ?>
-        <button class="w3-button w3-white filter-btn" onclick="filterProjects(this.getAttribute('data-tag'))" data-tag="<?= htmlspecialchars($tag) ?>"><?= htmlspecialchars($tag) ?></button>
-      <?php endforeach; ?>
+    <div class="w3-center w3-padding-32" id="filter-container">
+        <div class="filter-dropdown">
+            <button onclick="toggleFilterDropdown()" class="w3-button w3-black">
+                Filtrer par technologie <i class="fa fa-caret-down" style="margin-left: 5px;"></i>
+            </button>
+            <div id="filter-checklist" class="filter-checklist-content">
+                <div class="filter-checklist-scrollable-area">
+                    <?php foreach ($allTags as $tag): ?>
+                        <label>
+                            <input type="checkbox" value="<?= htmlspecialchars($tag) ?>" onchange="applyFilters()">
+                            <?= htmlspecialchars($tag) ?>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+                <hr style="margin: 10px 0; border-color: #eee;">
+                <button onclick="clearFilters()" class="w3-button w3-light-grey" style="width:100%; text-align:center;">Effacer les filtres</button>
+            </div>
+        </div>
     </div>
 
     <div class="projects-grid">
@@ -64,13 +77,20 @@ if (!empty($projects)) {
               <p style="font-size: 1.1rem; line-height: 1.6;"><?= $project['description'] ?></p>
               
               <?php if (!empty($project['commentary'])): ?>
-                <p style="font-size: 1rem; margin-top: 15px;"><?= $project['commentary'] ?></p>
+                <div class="project-commentary">
+                    <h5 class="project-commentary-title">Commentaire</h5>
+                    <p class="project-commentary-text"><?= nl2br($project['commentary']) ?></p>
+                </div>
               <?php endif; ?>
 
               <div class="modal-gallery">
-                <?php foreach ($project['images'] as $img): ?>
-                    <img src="<?= $img ?>" onclick="openLightbox(this.src)" alt="<?= $project['title'] ?>">
-                <?php endforeach; ?>
+                <?php if (!empty($project['images'])): ?>
+                    <?php foreach ($project['images'] as $img): ?>
+                        <img src="<?= $img ?>" onclick="openLightbox(this.src)" alt="<?= $project['title'] ?>">
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="w3-center w3-text-grey">Aucune image disponible</p>
+                <?php endif; ?>
               </div>
 
               <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
@@ -104,30 +124,46 @@ if (!empty($projects)) {
 </div>
 
 <script>
-function filterProjects(tag) {
-    var cards = document.getElementsByClassName('project-card');
-    var btns = document.getElementsByClassName('filter-btn');
-    
-    for (var i = 0; i < btns.length; i++) {
-        var btn = btns[i];
-        if (btn.getAttribute('data-tag') === tag) {
-            btn.classList.remove('w3-white');
-            btn.classList.add('w3-black');
-        } else {
-            btn.classList.remove('w3-black');
-            btn.classList.add('w3-white');
-        }
-    }
+function toggleFilterDropdown() {
+    document.getElementById("filter-checklist").classList.toggle("show");
+}
 
-    for (var i = 0; i < cards.length; i++) {
-        var card = cards[i];
-        var cardTags = card.getAttribute('data-tags').split(',');
-        if (tag === 'all' || cardTags.indexOf(tag) > -1) {
-            card.style.display = '';
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.filter-dropdown, .filter-dropdown *')) {
+    var dropdowns = document.getElementsByClassName("filter-checklist-content");
+    for (var i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+
+function applyFilters() {
+    const checkboxes = document.querySelectorAll('#filter-checklist input[type="checkbox"]:checked');
+    const selectedTags = Array.from(checkboxes).map(cb => cb.value);
+    const cards = document.getElementsByClassName('project-card');
+
+    for (let i = 0; i < cards.length; i++) {
+        const card = cards[i];
+        const cardTags = card.getAttribute('data-tags').split(',');
+        
+        if (selectedTags.length === 0) {
+            card.style.display = ''; // Show all if no filter is selected
         } else {
-            card.style.display = 'none';
+            // Show if card has ALL of the selected tags
+            const hasAllTags = selectedTags.every(tag => cardTags.includes(tag));
+            card.style.display = hasAllTags ? '' : 'none';
         }
     }
+}
+
+function clearFilters() {
+    const checkboxes = document.querySelectorAll('#filter-checklist input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = false);
+    applyFilters();
 }
 
 function openLightbox(src) {

@@ -31,9 +31,10 @@ include $root . '/inc/head.php';
             <table class="dashboard-table">
                 <thead>
                     <tr>
-                        <th>Nom du Projet</th>
+                        <th><a href="dashboard?sort=nom_proj&order=<?= ($sort === 'nom_proj' && $order === 'ASC') ? 'DESC' : 'ASC' ?>" style="color:inherit; text-decoration:none;">Nom du Projet<?= $sort === 'nom_proj' ? ($order === 'ASC' ? ' <i class="fa fa-sort-up"></i>' : ' <i class="fa fa-sort-down"></i>') : '' ?></a></th>
                         <th>Description</th>
-                        <th>Compétences</th>
+                        <th><a href="dashboard?sort=visible&order=<?= ($sort === 'visible' && $order === 'ASC') ? 'DESC' : 'ASC' ?>" style="color:inherit; text-decoration:none;">Visible<?= $sort === 'visible' ? ($order === 'ASC' ? ' <i class="fa fa-sort-up"></i>' : ' <i class="fa fa-sort-down"></i>') : '' ?></a></th>
+                        <th><a href="dashboard?sort=competences&order=<?= ($sort === 'competences' && $order === 'ASC') ? 'DESC' : 'ASC' ?>" style="color:inherit; text-decoration:none;">Compétences<?= $sort === 'competences' ? ($order === 'ASC' ? ' <i class="fa fa-sort-up"></i>' : ' <i class="fa fa-sort-down"></i>') : '' ?></a></th>
                         <th style="width: 150px;">Actions</th>
                     </tr>
                 </thead>
@@ -43,6 +44,13 @@ include $root . '/inc/head.php';
                             <tr>
                                 <td><?= htmlspecialchars($project['nom_proj']) ?></td>
                                 <td><?= htmlspecialchars($project['desc_proj']) ?></td>
+                                <td style="text-align:center;">
+                                    <?php if(!empty($project['visible'])): ?>
+                                        <i class="fa fa-eye" style="color:green" title="Visible"></i>
+                                    <?php else: ?>
+                                        <i class="fa fa-eye-slash" style="color:grey" title="Masqué"></i>
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <!-- Display skills as tags -->
                                     <?php 
@@ -64,7 +72,7 @@ include $root . '/inc/head.php';
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" style="text-align:center; padding:20px;">Aucun projet trouvé.</td>
+                            <td colspan="5" style="text-align:center; padding:20px;">Aucun projet trouvé.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -105,6 +113,22 @@ include $root . '/inc/head.php';
                 <input class="form-input" type="text" name="lien_proj" id="edit_lien_proj">
             </div>
             
+            <div class="form-group">
+                <label class="form-label">Compétences</label>
+                <div id="edit_competences" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap:10px; padding:10px; border:1px solid #eee; border-radius:8px; max-height: 150px; overflow-y: auto;">
+                    <?php if (!empty($all_competences)): ?>
+                        <?php foreach ($all_competences as $comp): ?>
+                            <div>
+                                <input type="checkbox" name="competences[]" value="<?= $comp['id_comp'] ?>" id="comp_<?= $comp['id_comp'] ?>" style="margin-right: 5px;">
+                                <label for="comp_<?= $comp['id_comp'] ?>"><?= htmlspecialchars($comp['name']) ?></label>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>Aucune compétence trouvée dans la base de données.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="form-label" style="display:inline-block; margin-right:10px;">Visible</label>
                 <input type="checkbox" name="visibilite_proj" id="edit_visibilite_proj" value="1" style="transform: scale(1.5);">
@@ -164,6 +188,16 @@ function openModal(id = null) {
             document.getElementById('edit_commentaire_proj').value = data.commentaire_proj;
             document.getElementById('edit_lien_proj').value = data.lien_proj;
             document.getElementById('edit_visibilite_proj').checked = (data.visible === true);
+
+            // Reset all competence checkboxes first
+            document.querySelectorAll('#edit_competences input[type="checkbox"]').forEach(cb => cb.checked = false);
+            // Check the ones for the project
+            if (data.competences && data.competences.length) {
+                data.competences.forEach(compId => {
+                    const cb = document.getElementById('comp_' + compId);
+                    if (cb) cb.checked = true;
+                });
+            }
             
             let html = '';
             if(data.images && data.images.length) {
@@ -181,6 +215,7 @@ function openModal(id = null) {
         document.getElementById('edit_visibilite_proj').checked = false;
         currentImagesContainer.style.display = 'none';
         currentImagesDiv.innerHTML = '';
+        document.querySelectorAll('#edit_competences input[type="checkbox"]').forEach(cb => cb.checked = false);
     }
 }
 </script>
