@@ -3,6 +3,9 @@ session_start();
 
 $db = require(dirname(__FILE__) . '/lib/pdo.php');
 $preventBackground = true;
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 ?>
 <!doctype html>
 <html lang="fr">
@@ -25,6 +28,7 @@ $preventBackground = true;
 
         <div class="w3-center">
             <form action="check_login.php" method="post" style="display: inline-block;">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 <div class="w3-card w3-padding w3-margin w3-row w3-auto">
                     <div class="w3-row-padding">
                         <div class="w3-container w3-margin-top w3-margin-bottom w3-half">

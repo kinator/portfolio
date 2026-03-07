@@ -1,5 +1,8 @@
 <?php
 include "$root/inc/head.php";
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 ?>
 
 <header class="contact-header">
@@ -12,23 +15,20 @@ include "$root/inc/head.php";
         <h2 class="w3-center light">FORMULAIRE DE CONTACT</h2>
         <p class="w3-center"><em>Envoyez-moi un message</em></p>
         
-        <?php if ($messageSent): ?>
-        <div class="w3-panel w3-green w3-display-container w3-padding-32 w3-center">
+        <div id="successMessage" class="w3-panel w3-green w3-display-container w3-padding-32 w3-center" style="display:none;">
           <h3>Message Envoyé!</h3>
           <p>Je reviendrai vers vous sous 48 heures.</p>
         </div>
-        <?php else: ?>
 
-        <?php if (!empty($errorMessage)): ?>
-        <div class="w3-panel w3-red w3-display-container w3-padding-16">
-            <p><?= htmlspecialchars($errorMessage) ?></p>
+        <div id="errorMessage" class="w3-panel w3-red w3-display-container w3-padding-16" style="display:none;">
+            <p id="errorText"></p>
         </div>
-        <?php endif; ?>
 
-        <div class="contact-card">
-        <form action="<?= $base_url ?>/contact" method="POST">
+        <div id="contactFormContainer" class="contact-card">
+        <form id="contactForm" action="<?= $base_url ?>/contact/send" method="POST">
           <!-- Honeypot field -->
           <input type="text" name="website_hp" style="display:none !important" tabindex="-1" autocomplete="off">
+          <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
           <div class="form-group">
             <label class="form-label">Nom</label>
@@ -56,7 +56,6 @@ include "$root/inc/head.php";
           </button>
         </form>
         </div>
-        <?php endif; ?>
 
         <div class="w3-center w3-padding-32">
             <a href="<?= $base_url ?>/assets/doc/CV_Behani_Julien_dev_sys_db.pdf" class="btn-primary" download><i class="fa fa-download"></i> Télécharger mon CV</a>
@@ -80,6 +79,51 @@ document.getElementById('contactEmail')?.addEventListener('input', function(e) {
         feedback.innerHTML = '<span class="w3-text-red"><i class="fa fa-times"></i> Email invalide</span>';
         e.target.style.borderColor = 'red';
     }
+});
+
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const formData = new FormData(form);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> ENVOI...';
+    
+    document.getElementById('errorMessage').style.display = 'none';
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(text => {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            throw new Error('Réponse serveur invalide: ' + text.substring(0, 100) + '...');
+        }
+    })
+    .then(data => {
+        if (data.success) {
+            document.getElementById('contactFormContainer').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+        } else {
+            document.getElementById('errorText').textContent = data.message || 'Une erreur est survenue.';
+            document.getElementById('errorMessage').style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('errorText').textContent = 'Une erreur technique est survenue.';
+        document.getElementById('errorMessage').style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+    });
 });
 </script>
 
